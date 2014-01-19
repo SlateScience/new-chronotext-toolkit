@@ -41,12 +41,14 @@ public class CinderRenderer extends GLRenderer
 
   protected Context mContext;
   protected Object mListener;
-
-  public CinderRenderer(Context context, Object listener)
+  
+  public CinderRenderer(Context context, int dpi, Object listener)
   {
+	super(dpi);
+	
     mContext = context;
     mListener = listener;
-
+    
     prelaunch();
   }
 
@@ -81,9 +83,9 @@ public class CinderRenderer extends GLRenderer
     launch(mContext, mListener);
   }
 
-  public void setup(GL10 gl, int width, int height)
+  public void setup(GL10 gl, int dpi, int width, int height)
   {
-    setup(width, height, getAccelerometerRotation());
+    setup(dpi, width, height, getAccelerometerRotation());
     initialized = true;
   }
 
@@ -146,7 +148,7 @@ public class CinderRenderer extends GLRenderer
 
   public native void launch(Context context, Object listener);
 
-  public native void setup(int width, int height, int accelerometerRotation);
+  public native void setup(int dpi, int width, int height, int accelerometerRotation);
 
   public native void shutdown();
 

@@ -62,6 +62,7 @@ namespace chronotext
         virtual double getElapsedSeconds() const = 0;
         virtual uint32_t getElapsedFrames() const = 0;
         
+        virtual int getDpi() const = 0;
         virtual int getWindowWidth() const = 0;
         virtual int getWindowHeight() const = 0;
         virtual ci::Vec2f getWindowCenter() const = 0;

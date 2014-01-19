@@ -42,6 +42,7 @@ enum
     std::shared_ptr<boost::asio::io_service> io;
     std::shared_ptr<boost::asio::io_service::work> ioWork;
     
+    int dpi;
     int width;
     int height;
     float contentScale;
@@ -58,6 +59,7 @@ enum
 @property (nonatomic, assign) chr::CinderSketch *sketch;
 @property (nonatomic, assign) float accelFilterFactor;
 @property (nonatomic, readonly) std::shared_ptr<boost::asio::io_service> &io;
+@property (nonatomic, readonly) int dpi;
 @property (nonatomic, readonly) int width;
 @property (nonatomic, readonly) int height;
 @property (nonatomic, readonly) float contentScale;

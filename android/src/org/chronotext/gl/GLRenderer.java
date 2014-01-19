@@ -11,7 +11,9 @@ package org.chronotext.gl;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 public abstract class GLRenderer implements GLSurfaceView.Renderer
@@ -27,6 +29,13 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
   protected boolean hidden;
   
   protected boolean showRequest;
+
+  protected int mDPI;
+  
+  public GLRenderer(int dpi)
+  {
+    mDPI = dpi;
+  }
 
   public void onSurfaceCreated(GL10 gl, EGLConfig config)
   {
@@ -48,7 +57,7 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
   {
     if (!initialized)
     {
-      setup(gl, w, h);
+      setup(gl, mDPI, w, h);
     }
 
     if (!attached)
@@ -179,7 +188,7 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
 
   public abstract void launch();
 
-  public abstract void setup(GL10 gl, int width, int height);
+  public abstract void setup(GL10 gl, int dpi, int width, int height);
 
   public abstract void shutdown();
 

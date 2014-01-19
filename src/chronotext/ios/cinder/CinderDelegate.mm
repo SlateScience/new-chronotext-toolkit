@@ -16,6 +16,8 @@
 
 #include "chronotext/utils/accel/AccelEvent.h"
 
+#include <sys/utsname.h>
+
 using namespace std;
 using namespace ci;
 using namespace app;
@@ -28,6 +30,7 @@ using namespace chr;
 @synthesize sketch;
 @synthesize accelFilterFactor;
 @synthesize io;
+@synthesize dpi;
 @synthesize width;
 @synthesize height;
 @synthesize contentScale;
@@ -89,6 +92,33 @@ using namespace chr;
     }
 }
 
+NSString *machineName()
+{
+    struct utsname systemInfo;
+    if (uname(&systemInfo) < 0) {
+        return nil;
+    } else {
+        return [NSString stringWithCString:systemInfo.machine
+                                  encoding:NSUTF8StringEncoding];
+    }
+}
+
+// detects iPad mini by machine id
+BOOL isIpadMini()
+{
+    NSString *machName = machineName();
+    if (machName == nil) return NO;
+    
+    BOOL isMini = NO;
+    if (   [machName isEqualToString:@"iPad2,5"]
+        || [machName isEqualToString:@"iPad2,6"]
+        || [machName isEqualToString:@"iPad2,7"])
+    {
+        isMini = YES;
+    }
+    return isMini;
+}
+
 - (void) setup
 {
     int mx;
@@ -116,6 +146,21 @@ using namespace chr;
     height = mx * frameHeight + my * frameWidth;
     
     contentScale = view.contentScaleFactor;
+    
+    float scale = 1;
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        scale = [[UIScreen mainScreen] scale];
+    }
+
+    if(isIpadMini()) {
+       dpi = 163 * scale;
+    } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        dpi = 132 * scale;
+    } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        dpi = 163 * scale;
+    } else {
+        dpi = 160 * scale;
+    }
     
     // ---
     

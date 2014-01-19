@@ -21,6 +21,7 @@ namespace chronotext
     {
         std::shared_ptr<ci::android::dostream> mOutputStream;
         
+        int mDpi;
         int mWidth;
         int mHeight;
         int mAccelerometerRotation;
@@ -88,7 +89,7 @@ namespace chronotext
         
         void launch(JavaVM *javaVM, jobject javaContext, jobject javaListener);
         
-        void setup(int width, int height, int accelerometerRotation);
+        void setup(int dpi, int width, int height, int accelerometerRotation);
         void shutdown();
         
         void draw();
@@ -107,6 +108,7 @@ namespace chronotext
         double getElapsedSeconds() const;
         uint32_t getElapsedFrames() const;
         
+        int getDpi() const;
         int getWindowWidth() const;
         int getWindowHeight() const;
         ci::Vec2f getWindowCenter() const;

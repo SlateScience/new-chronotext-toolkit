@@ -86,6 +86,11 @@ namespace chronotext
         return ((CinderDelegate*)context).elapsedFrames;
     }
     
+    int CinderSketchComplex::getDpi() const
+    {
+        return ((CinderDelegate*)context).dpi;
+    }
+    
     int CinderSketchComplex::getWindowWidth() const
     {
         return ((CinderDelegate*)context).width;
