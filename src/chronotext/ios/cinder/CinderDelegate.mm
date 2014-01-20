@@ -92,31 +92,19 @@ using namespace chr;
     }
 }
 
-NSString *machineName()
+// detects iPad mini by machine id
+static BOOL isIpadMini()
 {
     struct utsname systemInfo;
     if (uname(&systemInfo) < 0) {
-        return nil;
-    } else {
-        return [NSString stringWithCString:systemInfo.machine
-                                  encoding:NSUTF8StringEncoding];
-    }
-}
-
-// detects iPad mini by machine id
-BOOL isIpadMini()
-{
-    NSString *machName = machineName();
-    if (machName == nil) return NO;
+        return NO;
+    };
     
-    BOOL isMini = NO;
-    if (   [machName isEqualToString:@"iPad2,5"]
-        || [machName isEqualToString:@"iPad2,6"]
-        || [machName isEqualToString:@"iPad2,7"])
-    {
-        isMini = YES;
-    }
-    return isMini;
+    NSString *machName = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    
+    return (   [machName isEqualToString:@"iPad2,5"]
+            || [machName isEqualToString:@"iPad2,6"]
+            || [machName isEqualToString:@"iPad2,7"]);
 }
 
 - (void) setup
