@@ -13,7 +13,8 @@ using namespace std;
 using namespace ci;
 using namespace app;
 
-#define DEFAULT_DESKTOP_DENSITY 100
+// Low density by default - close to a typical desktop monitor
+#define DEFAULT_DESKTOP_DENSITY 120
 
 namespace chronotext
 {
