@@ -13,6 +13,8 @@ using namespace std;
 using namespace ci;
 using namespace app;
 
+#define DEFAULT_DESKTOP_DENSITY 100
+
 namespace chronotext
 {
     CinderSketchSimple::CinderSketchSimple(void *context, void *delegate)
@@ -20,7 +22,10 @@ namespace chronotext
     CinderSketchBase(),
     context(static_cast<AppNative*>(context)),
     delegate(static_cast<CinderApp*>(delegate))
-    {}
+    {
+        // put here code that would detect the monitor's DPI, if possible
+        mDensity = DEFAULT_DESKTOP_DENSITY;
+    }
     
     void CinderSketchSimple::sendMessageToDelegate(int what, const string &body)
     {
