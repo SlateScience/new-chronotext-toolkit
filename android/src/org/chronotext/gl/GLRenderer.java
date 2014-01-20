@@ -30,11 +30,11 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
   
   protected boolean showRequest;
 
-  protected int mDPI;
+  protected float mDensity;
   
-  public GLRenderer(int dpi)
+  public GLRenderer(float density)
   {
-    mDPI = dpi;
+    mDensity = density;
   }
 
   public void onSurfaceCreated(GL10 gl, EGLConfig config)
@@ -57,7 +57,7 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
   {
     if (!initialized)
     {
-      setup(gl, mDPI, w, h);
+      setup(gl, mDensity, w, h);
     }
 
     if (!attached)
@@ -188,7 +188,7 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
 
   public abstract void launch();
 
-  public abstract void setup(GL10 gl, int dpi, int width, int height);
+  public abstract void setup(GL10 gl, float density, int width, int height);
 
   public abstract void shutdown();
 

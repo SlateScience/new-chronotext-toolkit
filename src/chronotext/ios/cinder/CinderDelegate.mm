@@ -30,7 +30,7 @@ using namespace chr;
 @synthesize sketch;
 @synthesize accelFilterFactor;
 @synthesize io;
-@synthesize dpi;
+@synthesize density;
 @synthesize width;
 @synthesize height;
 @synthesize contentScale;
@@ -153,13 +153,13 @@ BOOL isIpadMini()
     }
 
     if(isIpadMini()) {
-       dpi = 163 * scale;
+       density = 163 * scale;
     } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        dpi = 132 * scale;
+        density = 132 * scale;
     } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        dpi = 163 * scale;
+        density = 163 * scale;
     } else {
-        dpi = 160 * scale;
+        density = 160 * scale;
     }
     
     // ---

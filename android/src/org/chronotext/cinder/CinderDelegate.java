@@ -29,10 +29,10 @@ public class CinderDelegate extends Handler
     mHandler = this;
 
     DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
-    int dpi = (int)(metrics.density * 160f);
+    float density = metrics.density * 160f;
 
     mView = new GLView(activity);
-    mView.setRenderer(new CinderRenderer(activity, dpi, this)); // WILL START THE RENDERER'S THREAD
+    mView.setRenderer(new CinderRenderer(activity, density, this)); // WILL START THE RENDERER'S THREAD
   }
 
   public CinderDelegate(Activity activity, Handler handler)

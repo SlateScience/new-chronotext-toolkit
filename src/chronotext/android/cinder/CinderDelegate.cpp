@@ -136,9 +136,9 @@ namespace chronotext
         mLastRawAccel = acceleration;
     }
     
-    void CinderDelegate::setup(int dpi, int width, int height, int accelerometerRotation)
+    void CinderDelegate::setup(float density, int width, int height, int accelerometerRotation)
     {
-        mDpi = dpi;
+        mDensity = density;
         mWidth = width;
         mHeight = height;
         mAccelerometerRotation = accelerometerRotation;
@@ -279,9 +279,9 @@ namespace chronotext
         return mFrameCount;
     }
     
-    int CinderDelegate::getDpi() const
+    float CinderDelegate::getWindowDensity() const
     {
-        return mDpi;
+        return mDensity;
     }
     
    int CinderDelegate::getWindowWidth() const

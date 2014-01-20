@@ -12,6 +12,8 @@
 
 #include "chronotext/cinder/CinderSketchBase.h"
 
+#define DESKTOP_DENSITY 100
+
 namespace chronotext
 {
     class CinderApp;
@@ -27,7 +29,7 @@ namespace chronotext
         double getElapsedSeconds() const { return context->getElapsedSeconds(); }
         uint32_t getElapsedFrames() const { return context->getElapsedFrames(); }
         
-        int getDpi() const { return context->getDpi(); }
+        float getWindowDensity() const { return DESKTOP_DENSITY; };
         int getWindowWidth() const { return context->getWindowWidth(); }
         int getWindowHeight() const { return context->getWindowHeight(); }
         ci::Vec2f getWindowCenter() const { return context->getWindowCenter(); }
