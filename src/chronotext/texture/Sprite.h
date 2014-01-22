@@ -12,17 +12,12 @@
 
 namespace chronotext
 {
-    class TextureManager;
-
     typedef std::shared_ptr<class Sprite> SpriteRef;
     
     class Sprite
     {
-        TextureRef texture;
-        InputSourceRef inputSource;
-        TextureManager& textureManager;
-        
     public:
+        TextureRef texture;
         
         float w;
         float h;
@@ -37,9 +32,9 @@ namespace chronotext
         float tx2;
         float ty2;
         
-        Sprite(InputSourceRef inputSource, TextureManager& textureManager); // IMAGE-BASED
-        Sprite(InputSourceRef inputSource, TextureManager& textureManager,
-               float w, float h, float ox, float oy, float ow, float oh, bool rotated, float tx1, float ty1, float tx2, float ty2); // ATLAS-BASED
+        Sprite() {}
+        Sprite(TextureRef texture); // IMAGE-BASED
+        Sprite(TextureRef texture, float w, float h, float ox, float oy, float ow, float oh, bool rotated, float tx1, float ty1, float tx2, float ty2); // ATLAS-BASED
         
         ci::Vec2f getSize() const;
         float getWidth() const;
@@ -50,12 +45,6 @@ namespace chronotext
         
         void drawFromCenter();
         void draw(float rx = 0, float ry = 0);
-        
-        bool isLoaded() const;
-        void purgeTexture();
-        void loadTexture();
-        InputSourceRef getInputSource() const;
-        
     };
 }
 

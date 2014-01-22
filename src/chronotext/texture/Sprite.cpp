@@ -7,38 +7,30 @@
  */
 
 #include "chronotext/texture/Sprite.h"
-#include "chronotext/texture/TextureManager.h"
-#include "chronotext/utils/Utils.h"
 
 using namespace std;
 using namespace ci;
 
 namespace chronotext
 {
-    Sprite::Sprite(InputSourceRef inputSource, TextureManager& textureManager)
+    Sprite::Sprite(TextureRef texture)
     :
-    inputSource(inputSource),
-    textureManager(textureManager),
+    texture(texture),
     ox(0),
     oy(0),
     rotated(false),
     tx1(0),
-    ty1(0)
+    ty1(0),
+    tx2(texture->getMaxU()),
+    ty2(texture->getMaxV())
     {
-        loadTexture();
-        
-        tx2 = texture->getMaxU();
-        ty2 = texture->getMaxV();
-        
         w = ow = texture->getWidth() * texture->getMaxU();
         h = oh = texture->getHeight() * texture->getMaxV();
     }
     
-    Sprite::Sprite(InputSourceRef inputSource, TextureManager& textureManager,
-                   float w, float h, float ox, float oy, float ow, float oh, bool rotated, float tx1, float ty1, float tx2, float ty2)
+    Sprite::Sprite(TextureRef texture, float w, float h, float ox, float oy, float ow, float oh, bool rotated, float tx1, float ty1, float tx2, float ty2)
     :
-    inputSource(inputSource),
-    textureManager(textureManager),
+    texture(texture),
     w(w),
     h(h),
     ox(ox),
@@ -69,16 +61,11 @@ namespace chronotext
     
     void Sprite::beginTexture()
     {
-        if(!texture) {
-            LOGD << "Loading texture on the fly for: " << inputSource->getFilePathHint() << endl;
-            loadTexture();
-        }
         texture->begin();
     }
     
     void Sprite::endTexture()
     {
-        assert(texture);
         texture->end();
     }
     
@@ -126,34 +113,5 @@ namespace chronotext
         glTexCoordPointer(2, GL_FLOAT, 0, coords);
         glVertexPointer(2, GL_FLOAT, 0, vertices);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);    
-    }
-
-    bool Sprite::isLoaded() const
-    {
-        return !!texture;
-    }
-    
-    void Sprite::purgeTexture()
-    {
-        if(!texture)
-            return;
-        textureManager.remove(texture);
-        texture.reset();
-    }
-    
-    void Sprite::loadTexture()
-    {
-        if(texture)
-            return;
-        
-        TextureRequest request(inputSource, true, TextureRequest::FLAGS_POT);
-        request.maxSize = Vec2i(1024, 1024);
-        
-        texture = textureManager.getTexture(request);
-    }
-    
-    InputSourceRef Sprite::getInputSource() const
-    {
-        return inputSource;
     }
 }
