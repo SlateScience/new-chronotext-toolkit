@@ -44,7 +44,9 @@ namespace chronotext
             
             if ((size.x > textureRequest.maxSize.x) || (size.y > textureRequest.maxSize.y))
             {
-                throw Texture::Exception("TEXTURE IS OVER-SIZED (" + toString(size.x) + "x" + toString(size.y) + ")");
+                string msg = "TEXTURE IS OVER-SIZED (" + toString(size.x) + "x" + toString(size.y) + "): " + textureRequest.inputSource->getFilePathHint();
+                LOGI << msg << endl;
+                throw Texture::Exception(msg);
             }
         }
 
