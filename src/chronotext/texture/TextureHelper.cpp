@@ -334,7 +334,7 @@ namespace chronotext
         }
     }
 
-    static inline bool IsPowerOfTwo(uint32 x)
+    static inline bool IsPowerOfTwo(unsigned int x)
     {
         return x == 0 || (x & (x - 1)) == 0;
     }
