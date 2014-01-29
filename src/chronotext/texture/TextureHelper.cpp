@@ -82,7 +82,7 @@ namespace chronotext
             }
             else if (textureRequest.flags & TextureRequest::FLAGS_POT_CROP)
             {
-                textureData = TextureData(fetchCroppablePowerOfTwoTextureData(textureRequest));
+                return TextureData(fetchCroppablePowerOfTwoTextureData(textureRequest));
             }
             else if (textureRequest.flags & TextureRequest::FLAGS_POT)
             {
