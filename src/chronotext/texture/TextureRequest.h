@@ -18,9 +18,10 @@ namespace chronotext
     {
         enum
         {
-            FLAGS_NONE = 0,
-            FLAGS_TRANSLUCENT = 1,
-            FLAGS_POT = 2
+            FLAGS_NONE = 0x0,
+            FLAGS_TRANSLUCENT = 0x1,
+            FLAGS_POT = 0x2,
+            FLAGS_POT_CROP = 0x4
         };
         
         InputSourceRef inputSource;

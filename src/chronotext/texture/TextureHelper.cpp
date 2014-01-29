@@ -44,7 +44,9 @@ namespace chronotext
             
             if ((size.x > textureRequest.maxSize.x) || (size.y > textureRequest.maxSize.y))
             {
-                throw Texture::Exception("TEXTURE IS OVER-SIZED (" + toString(size.x) + "x" + toString(size.y) + ")");
+                string msg = "TEXTURE IS OVER-SIZED (" + toString(size.x) + "x" + toString(size.y) + "): " + textureRequest.inputSource->getFilePathHint();
+                LOGI << msg << endl;
+                throw Texture::Exception(msg);
             }
         }
 
@@ -77,6 +79,10 @@ namespace chronotext
             if (textureRequest.flags & TextureRequest::FLAGS_TRANSLUCENT)
             {
                 return TextureData(fetchTranslucentTextureData(textureRequest)); // RVO-READY
+            }
+            else if (textureRequest.flags & TextureRequest::FLAGS_POT_CROP)
+            {
+                textureData = TextureData(fetchCroppablePowerOfTwoTextureData(textureRequest));
             }
             else if (textureRequest.flags & TextureRequest::FLAGS_POT)
             {
@@ -329,6 +335,93 @@ namespace chronotext
         else
         {
             return TextureData(textureRequest, src); // RVO-READY
+        }
+    }
+
+    static inline bool IsPowerOfTwo(unsigned int x)
+    {
+        return x == 0 || (x & (x - 1)) == 0;
+    }
+    
+    TextureData TextureHelper::fetchCroppablePowerOfTwoTextureData(const TextureRequest &textureRequest)
+    {
+        Surface src(loadImage(textureRequest.inputSource->loadDataSource()));
+        
+        int srcWidth = src.getWidth();
+        int srcHeight = src.getHeight();
+        
+        int dstWidth = nextPowerOfTwo(srcWidth);
+        int dstHeight = nextPowerOfTwo(srcHeight);
+        
+        assert(IsPowerOfTwo(textureRequest.maxSize.x));
+        if(textureRequest.maxSize.x > 0 && srcWidth > textureRequest.maxSize.x) {
+            if(textureRequest.flags & TextureRequest::FLAGS_POT_CROP) {
+                dstWidth = textureRequest.maxSize.x;
+            }
+            else {
+                stringstream msg;
+                msg << "TEXTURE IS OVER-SIZED (width=" << srcWidth << " > " << textureRequest.maxSize.x << "): " << textureRequest.inputSource->getFilePathHint();
+                LOGI << msg.str() << endl;
+                throw Texture::Exception(msg.str());
+            }
+        }
+        
+        assert(IsPowerOfTwo(textureRequest.maxSize.y));
+        if(textureRequest.maxSize.y > 0 && srcHeight > textureRequest.maxSize.y) {
+            if(textureRequest.flags & TextureRequest::FLAGS_POT_CROP) {
+                dstHeight = textureRequest.maxSize.y;
+            }
+            else {
+                stringstream msg;
+                msg << "TEXTURE IS OVER-SIZED (height=" << srcHeight << " > " << textureRequest.maxSize.y << "): " << textureRequest.inputSource->getFilePathHint();
+                LOGI << msg.str() << endl;
+                throw Texture::Exception(msg.str());
+            }
+        }
+        
+        if ((srcWidth  != dstWidth) ||
+            (srcHeight != dstHeight))
+        {
+            Surface dst(dstWidth, dstHeight, src.hasAlpha(), src.getChannelOrder());
+            
+            // 1. Fill new surface with black:
+            if(dstWidth > srcWidth) {
+                ip::fill(&dst, ColorA::zero(), Area(srcWidth + 1, 0, dstWidth, dstHeight));
+            }
+            if(dstHeight > srcHeight) {
+                ip::fill(&dst, ColorA::zero(), Area(0, srcHeight + 1, dstWidth, dstHeight));
+            }
+            
+            // 2. Crop? If needed, crop in a centered way
+            Vec2f srcCorner(0,0);
+            Vec2f copySize(srcWidth, srcHeight);
+            if(dstWidth < srcWidth) {
+                srcCorner.x = (srcWidth - dstWidth) * 0.5f;
+                copySize.x = dstWidth;
+            }
+            if(dstHeight < srcHeight) {
+                srcCorner.y = (srcHeight - dstHeight) * 0.5f;
+                copySize.y = dstHeight;
+            }
+            
+            // 3. The copy
+            dst.copyFrom(src, Area(srcCorner, srcCorner + copySize), Vec2i::zero());
+            
+            // 4. DUPLICATING THE RIGHT EDGE:
+            //    (NECESSARY TO AVOID BORDER ARTIFACTS WHEN THE
+            //     TEXTURE IS NOT DRAWN AT ITS ORIGINAL SCALE)
+            if(dstWidth > srcWidth) {
+                dst.copyFrom(src, Area(srcWidth - 1, 0, srcWidth, srcHeight), Vec2i(1, 0));
+            }
+            if(dstHeight > srcHeight) {
+                dst.copyFrom(src, Area(0, srcHeight - 1, srcWidth, srcHeight), Vec2i(0, 1));
+            }
+            
+            return TextureData(textureRequest, dst, srcWidth / float(dstWidth), srcHeight / float(dstHeight));
+        }
+        else
+        {
+            return TextureData(textureRequest, src);
         }
     }
 }

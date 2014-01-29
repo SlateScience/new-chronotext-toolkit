@@ -17,6 +17,7 @@ namespace chronotext
         static void textureDeallocator(void *refcon);
         static TextureData fetchTranslucentTextureData(const TextureRequest &textureRequest);
         static TextureData fetchPowerOfTwoTextureData(const TextureRequest &textureRequest);
+        static TextureData fetchCroppablePowerOfTwoTextureData(const TextureRequest &textureRequest);
         
     public:
         static ci::gl::TextureRef loadTexture(const std::string &resourceName, bool useMipmap = false, int flags = TextureRequest::FLAGS_NONE);

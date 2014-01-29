@@ -27,6 +27,7 @@ namespace chronotext
         double getElapsedSeconds() const { return context->getElapsedSeconds(); }
         uint32_t getElapsedFrames() const { return context->getElapsedFrames(); }
         
+        float getWindowDensity() const { return mDensity; };
         int getWindowWidth() const { return context->getWindowWidth(); }
         int getWindowHeight() const { return context->getWindowHeight(); }
         ci::Vec2f getWindowCenter() const { return context->getWindowCenter(); }
@@ -40,6 +41,7 @@ namespace chronotext
     protected:
         ci::app::AppNative *context;
         CinderApp *delegate;
+        float mDensity;
     };
 }
 

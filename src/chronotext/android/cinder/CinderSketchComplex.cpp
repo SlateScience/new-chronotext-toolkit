@@ -42,6 +42,11 @@ namespace chronotext
         return context->getElapsedFrames();
     }
     
+    float CinderSketchComplex::getWindowDensity() const
+    {
+        return context->getWindowDensity();
+    }
+    
     int CinderSketchComplex::getWindowWidth() const
     {
         return context->getWindowWidth();

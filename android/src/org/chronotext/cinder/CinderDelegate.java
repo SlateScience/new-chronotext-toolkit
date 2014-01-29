@@ -13,6 +13,7 @@ import org.chronotext.gl.GLView;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 public class CinderDelegate extends Handler
@@ -27,8 +28,11 @@ public class CinderDelegate extends Handler
     mActivity = activity;
     mHandler = this;
 
+    DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+    float density = metrics.density * 160f;
+
     mView = new GLView(activity);
-    mView.setRenderer(new CinderRenderer(activity, this)); // WILL START THE RENDERER'S THREAD
+    mView.setRenderer(new CinderRenderer(activity, density, this)); // WILL START THE RENDERER'S THREAD
   }
 
   public CinderDelegate(Activity activity, Handler handler)
