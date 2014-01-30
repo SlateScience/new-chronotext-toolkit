@@ -69,6 +69,8 @@ namespace chronotext
         
         float getMaxU() const;
         float getMaxV() const;
+        
+        bool hasMipmap() const;
     };
 }
 

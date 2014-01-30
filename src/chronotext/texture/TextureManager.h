@@ -20,8 +20,7 @@ namespace chronotext
     public:
         TextureManager()
         :
-        unloaded(false),
-        totalMemory(0)
+        unloaded(false)
         {}
         
         TextureRef getTexture(const std::string &resourceName, bool useMipmap = false, int flags = TextureRequest::FLAGS_NONE);
@@ -34,12 +33,9 @@ namespace chronotext
         void unload();
         void reload();
         
-        size_t getTotalMemory() const {return totalMemory;}
-        
     protected:
         std::map<TextureRequest, TextureRef> cache;
         bool unloaded;
-        size_t totalMemory;
     };
 }
 

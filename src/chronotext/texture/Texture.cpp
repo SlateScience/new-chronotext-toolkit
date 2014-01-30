@@ -185,4 +185,9 @@ namespace chronotext
     {
         return maxV;
     }
+    
+    bool Texture::hasMipmap() const
+    {
+        return request.useMipmap;
+    }
 }

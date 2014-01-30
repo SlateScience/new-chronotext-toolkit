@@ -35,7 +35,6 @@ namespace chronotext
         {
             auto texture = make_shared<Texture>(textureRequest);
             cache[textureRequest] = texture;
-            totalMemory += texture->getWidth() * texture->getHeight() * 4;
             return texture;
         }
     }
@@ -46,7 +45,6 @@ namespace chronotext
         {
             if (it->second == texture)
             {
-                totalMemory -= texture->getWidth() * texture->getHeight() * 4;
                 cache.erase(it);
                 return true;
             }
@@ -58,7 +56,6 @@ namespace chronotext
     void TextureManager::clear()
     {
         cache.clear();
-        totalMemory = 0;
     }
     
     void TextureManager::unload()
