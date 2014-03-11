@@ -77,11 +77,6 @@ namespace chronotext
         return context->getWindowBounds();
     }
     
-    float CinderSketchComplex::getWindowDensity() const
-    {
-        return context->getWindowDensity();
-    }
-    
     ostream& CinderSketchComplex::console()
     {
         return context->console();

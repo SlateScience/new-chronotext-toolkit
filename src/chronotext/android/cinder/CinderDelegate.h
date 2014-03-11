@@ -114,7 +114,6 @@ namespace chronotext
         ci::Vec2i getWindowSize() const;
         float getWindowAspectRatio() const;
         ci::Area getWindowBounds() const;
-        float getWindowDensity() const;
         
         virtual void receiveMessageFromSketch(int what, const std::string &body);
         virtual void sendMessageToSketch(int what, const std::string &body);

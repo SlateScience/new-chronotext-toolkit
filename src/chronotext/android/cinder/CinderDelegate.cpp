@@ -321,11 +321,6 @@ namespace chronotext
         return Area(0, 0, mWidth, mHeight);
     }
     
-    float CinderDelegate::getWindowDensity() const
-    {
-        return 0; // TODO
-    }
-    
     void CinderDelegate::receiveMessageFromSketch(int what, const string &body)
     {
 #ifdef DEBUG_MESSAGES
