@@ -16,6 +16,8 @@
 
 #include "chronotext/utils/accel/AccelEvent.h"
 
+#include <sys/utsname.h>
+
 using namespace std;
 using namespace ci;
 using namespace app;
@@ -88,6 +90,21 @@ using namespace chr;
     }
 }
 
+// detects iPad mini by machine id
+static BOOL isIpadMini()
+{
+    struct utsname systemInfo;
+    if (uname(&systemInfo) < 0) {
+        return NO;
+    };
+    
+    NSString *machName = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    
+    return (   [machName isEqualToString:@"iPad2,5"]
+            || [machName isEqualToString:@"iPad2,6"]
+            || [machName isEqualToString:@"iPad2,7"]);
+}
+
 - (void) setup
 {
     int mx;
@@ -130,6 +147,21 @@ using namespace chr;
     }
     
     windowInfo.density = 0; // TODO
+    
+    float scale = 1;
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        scale = [[UIScreen mainScreen] scale];
+    }
+
+    if(isIpadMini()) {
+       density = 163 * scale;
+    } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        density = 132 * scale;
+    } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        density = 163 * scale;
+    } else {
+        density = 160 * scale;
+    }
     
     // ---
     

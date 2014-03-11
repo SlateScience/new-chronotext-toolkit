@@ -205,4 +205,9 @@ namespace chronotext
         maxU = texture->getMaxU();
         maxV = texture->getMaxV();
     }
+
+    bool Texture::hasMipmap() const
+    {
+        return request.useMipmap;
+    }
 }

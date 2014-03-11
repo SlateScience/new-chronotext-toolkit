@@ -64,6 +64,7 @@ namespace chronotext
         float getMaxU() const;
         float getMaxV() const;
         ci::Vec2f getMaxUV() const;
+        bool hasMipmap() const;
         
     protected:
         ci::gl::TextureRef target;

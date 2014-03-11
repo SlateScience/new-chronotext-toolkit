@@ -34,6 +34,7 @@ namespace chronotext
         static void textureDeallocator(void *refcon);
         static TextureData fetchTranslucentTextureData(const TextureRequest &textureRequest);
         static TextureData fetchPowerOfTwoTextureData(const TextureRequest &textureRequest);
+        static TextureData fetchCroppablePowerOfTwoTextureData(const TextureRequest &textureRequest);
     };
 }
 

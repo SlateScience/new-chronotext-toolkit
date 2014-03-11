@@ -21,6 +21,7 @@ namespace chronotext
     {
         std::shared_ptr<ci::android::dostream> mOutputStream;
         
+        float mDensity;
         int mWidth;
         int mHeight;
         int mDisplayRotation;
@@ -86,9 +87,8 @@ namespace chronotext
             CI_LOGD("CinderDelegate DELETED");
         }
         
-        void launch(JavaVM *javaVM, jobject javaContext, jobject javaListener);
-        
-        void setup(int width, int height, int displayRotation);
+        void launch(JavaVM *javaVM, jobject javaContext, jobject javaListener);        
+        void setup(float density, int width, int height, int displayRotation);
         void shutdown();
         
         void draw();
@@ -107,6 +107,7 @@ namespace chronotext
         double getElapsedSeconds() const;
         uint32_t getElapsedFrames() const;
         
+        float getWindowDensity() const;
         int getWindowWidth() const;
         int getWindowHeight() const;
         ci::Vec2f getWindowCenter() const;
