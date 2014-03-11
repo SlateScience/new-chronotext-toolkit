@@ -154,13 +154,13 @@ static BOOL isIpadMini()
     }
 
     if(isIpadMini()) {
-       density = 163 * scale;
+        windowInfo.density = 163 * scale;
     } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        density = 132 * scale;
+        windowInfo.density = 132 * scale;
     } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        density = 163 * scale;
+        windowInfo.density = 163 * scale;
     } else {
-        density = 160 * scale;
+        windowInfo.density = 160 * scale;
     }
     
     // ---
