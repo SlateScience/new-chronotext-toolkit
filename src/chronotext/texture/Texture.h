@@ -16,16 +16,6 @@ namespace chronotext
     
     class Texture
     {
-        ci::gl::TextureRef target;
-        
-        GLuint name;
-        int width;
-        int height;
-        float maxU;
-        float maxV;
-        
-        void setTarget(ci::gl::TextureRef texture);
-        
     public:
         class Exception : public std::exception
         {
@@ -71,6 +61,17 @@ namespace chronotext
         float getMaxV() const;
         
         bool hasMipmap() const;
+
+    protected:
+        ci::gl::TextureRef target;
+        
+        GLuint name;
+        int width;
+        int height;
+        float maxU;
+        float maxV;
+        
+        void setTarget(ci::gl::TextureRef texture);
     };
 }
 

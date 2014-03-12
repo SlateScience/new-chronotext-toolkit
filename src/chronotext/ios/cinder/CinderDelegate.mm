@@ -45,6 +45,7 @@ using namespace chr;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidReceiveMemoryWarningNotification) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
     }
     
     return self;
@@ -339,7 +340,7 @@ static BOOL isIpadMini()
     [self touchesEnded:touches withEvent:event];
 }
 
-#pragma mark ---------------------------------------- BACKGROUND / FOREGROUND ----------------------------------------
+#pragma mark ---------------------------------------- NOTIFICATIONS ----------------------------------------
 
 - (void) applicationWillResignActive
 {
@@ -354,6 +355,14 @@ static BOOL isIpadMini()
     if (initialized && !active)
     {
         sketch->event(CinderSketch::EVENT_FOREGROUND);
+    }
+}
+
+- (void) applicationDidReceiveMemoryWarningNotification
+{
+    if (initialized)
+    {
+        sketch->event(CinderSketch::EVENT_MEMORY_WARNING);
     }
 }
 

@@ -35,17 +35,6 @@ namespace chronotext
         setTarget(TextureHelper::uploadTextureData(textureData));
     }
     
-    void Texture::setTarget(ci::gl::TextureRef texture)
-    {
-        target = texture;
-        
-        name = texture->getId();
-        width = texture->getWidth();
-        height = texture->getHeight();
-        maxU = texture->getMaxU();
-        maxV = texture->getMaxV();
-    }
-    
     void Texture::unload()
     {
         if (target)
@@ -189,5 +178,16 @@ namespace chronotext
     bool Texture::hasMipmap() const
     {
         return request.useMipmap;
+    }
+
+    void Texture::setTarget(ci::gl::TextureRef texture)
+    {
+        target = texture;
+        
+        name = texture->getId();
+        width = texture->getWidth();
+        height = texture->getHeight();
+        maxU = texture->getMaxU();
+        maxV = texture->getMaxV();
     }
 }

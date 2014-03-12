@@ -11,6 +11,10 @@
 #include "chronotext/path/FollowablePath.h"
 #include "chronotext/utils/stroke/TexturedTriangleStrip.h"
 
+/*
+ * ASSOCIATED TEXTURES SHOULD HAVE THEIR "GL_TEXTURE_WRAP_S" SET TO "GL_REPEAT",
+ */
+
 namespace chronotext
 {
     class StrokeHelper
@@ -18,17 +22,14 @@ namespace chronotext
     public:
         static void stroke(FollowablePath *path, TexturedTriangleStrip &strip, float width, float ratio = 1)
         {
+            auto size = path->size;
+            
             strip.clear();
-            int size = path->size;
-            
-            float *vertices = new float[size * 4];
-            float *coords = new float[size * 4];
-            
-            strip.count = size * 2;
-            strip.vertices = vertices;
-            strip.coords = coords;
+            strip.vertices.reserve(size * 4);
             
             float ufreq = ratio * 0.5f / width;
+            ci::Vec2f w1(+width, -width);
+            ci::Vec2f w2(-width, +width);
             
             for (int i = 0; i < size; i++)
             {
@@ -45,105 +46,67 @@ namespace chronotext
                     o2 = 0;
                 }
                 
-                float len = path->len[i + o1] - path->len[i + o2];
-                float dx = (path->x[i + o1] - path->x[i + o2]) / len;
-                float dy = (path->y[i + o1] - path->y[i + o2]) / len;
+                float l = path->len[i + o1] - path->len[i + o2];
+                ci::Vec2f d = (path->points[i + o1] - path->points[i + o2]) / l;
+                float textureU = ufreq * path->len[i];
                 
-                *vertices++ = path->x[i] + width * dy;
-                *vertices++ = path->y[i] - width * dx;
+                strip.vertices.emplace_back(path->points[i] + w1 * d.yx());
+                strip.vertices.emplace_back(textureU, 0);
                 
-                *vertices++ = path->x[i] - width * dy;
-                *vertices++ = path->y[i] + width * dx;
-                
-                float textureU = path->len[i] * ufreq;
-                
-                *coords++ = textureU;
-                *coords++ = 0;
-                *coords++ = textureU;
-                *coords++ = 1;
+                strip.vertices.emplace_back(path->points[i] + w2 * d.yx());
+                strip.vertices.emplace_back(textureU, 1);
             }
         }
         
         static void stroke(const std::vector<ci::Vec2f> &points, TexturedTriangleStrip &strip, float width, float ratio = 1)
         {
+            auto size = points.size();
+            
             strip.clear();
-            int size = points.size();
+            strip.vertices.reserve(size * 4);
             
             if (size > 1)
             {
-                float *vertices = new float[size * 4];
-                float *coords = new float[size * 4];
-                
-                strip.vertices = vertices;
-                strip.coords = coords;
-                
-                // ---
-                
-                ci::Vec2f p0, p1, p2;
-                float dx, dy;
-                float d;
-                
                 float textureU = 0;
+                
                 float ufreq = ratio * 0.5f / width;
+                ci::Vec2f w1(+width, -width);
+                ci::Vec2f w2(-width, +width);
                 
-                // ---
-                
-                p0 = points[0];
-                p1 = points[1];
+                auto p0 = points[0];
+                auto p1 = points[1];
                 
                 if (p0 != p1)
                 {
-                    strip.count += 2;
+                    ci::Vec2f d(p1 - p0);
+                    float l = d.length();
+                    d /= l;
+
+                    textureU += ufreq * l;
+
+                    strip.vertices.emplace_back(p0 + w1 * d.yx());
+                    strip.vertices.emplace_back(textureU, 0);
                     
-                    dx = p1.y - p0.y;
-                    dy = p0.x - p1.x;
-                    
-                    d = ci::math<float>::sqrt(dx * dx + dy * dy);
-                    dx /= d;
-                    dy /= d;
-                    
-                    *coords++ = textureU;
-                    *coords++ = 0;
-                    *coords++ = textureU;
-                    *coords++ = 1;
-                    
-                    *vertices++ = p0.x - width * dx;
-                    *vertices++ = p0.y - width * dy;
-                    *vertices++ = p0.x + width * dx;
-                    *vertices++ = p0.y + width * dy;
-                    
-                    textureU += ufreq * d;
+                    strip.vertices.emplace_back(p0 + w2 * d.yx());
+                    strip.vertices.emplace_back(textureU, 1);
                 }
                 
                 for (int i = 1; i < size - 1; i++)
                 {
-                    p0 = points[i - 1];
-                    p1 = points[i];
-                    p2 = points[i + 1];
+                    auto p0 = points[i - 1];
+                    auto p1 = points[i];
+                    auto p2 = points[i + 1];
                     
                     if (p1 != p2)
                     {
-                        strip.count += 2;
+                        ci::Vec2f d = (p2 - p1).normalized();
+                        textureU += ufreq * (p1 - p0).length();
                         
-                        dx = p2.y - p0.y;
-                        dy = p0.x - p2.x;
+                        strip.vertices.emplace_back(p1 + w1 * d.yx());
+                        strip.vertices.emplace_back(textureU, 0);
                         
-                        d = ci::math<float>::sqrt(dx * dx + dy * dy);
-                        dx /= d;
-                        dy /= d;
-                        
-                        float dist = ci::math<float>::sqrt((p1.x - p0.x) * (p1.x - p0.x) + (p1.y - p0.y) * (p1.y - p0.y));
-                        textureU += ufreq * dist;
-                        
-                        *coords++ = textureU;
-                        *coords++ = 0;
-                        *coords++ = textureU;
-                        *coords++ = 1;
-                        
-                        *vertices++ = p1.x - width * dx;
-                        *vertices++ = p1.y - width * dy;
-                        *vertices++ = p1.x + width * dx;
-                        *vertices++ = p1.y + width * dy;
+                        strip.vertices.emplace_back(p1 + w2 * d.yx());
+                        strip.vertices.emplace_back(textureU, 1);
                     }
                 }
                 
@@ -152,26 +115,17 @@ namespace chronotext
                 
                 if (p0 != p1)
                 {
-                    strip.count += 2;
+                    ci::Vec2f d(p1 - p0);
+                    float l = d.length();
+                    d /= l;
                     
-                    dx = p1.y - p0.y;
-                    dy = p0.x - p1.x;
+                    textureU += ufreq * l;
                     
-                    d = ci::math<float>::sqrt(dx * dx + dy * dy);
-                    dx /= d;
-                    dy /= d;
+                    strip.vertices.emplace_back(p1 + w1 * d.yx());
+                    strip.vertices.emplace_back(textureU, 0);
                     
-                    textureU += ufreq * d;
-                    
-                    *coords++ = textureU;
-                    *coords++ = 0;
-                    *coords++ = textureU;
-                    *coords   = 1;
-                    
-                    *vertices++ = p1.x - width * dx;
-                    *vertices++ = p1.y - width * dy;
-                    *vertices++ = p1.x + width * dx;
-                    *vertices   = p1.y + width * dy;
+                    strip.vertices.emplace_back(p1 + w2 * d.yx());
+                    strip.vertices.emplace_back(textureU, 1);
                 }
             }
         }
