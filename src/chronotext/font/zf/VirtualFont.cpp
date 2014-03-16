@@ -401,10 +401,6 @@ namespace chronotext
                     this->sequence = sequence;
                     sequence->begin(useColor, anisotropy);
                 }
-                else
-                {
-                    begin(useColor);
-                }
                 
                 clearClip();
             }
@@ -428,6 +424,7 @@ namespace chronotext
                 }
                 else
                 {
+                    begin(sequenceUseColor);
                     batchMap->flush(getIndices(), sequenceUseColor, anisotropy);
                     end(sequenceUseColor);
                 }
