@@ -139,6 +139,7 @@ namespace chronotext
             inline void beginSequence(FontSequence &sequence, bool useColor = false) { beginSequence(&sequence, useColor); }
             inline void beginSequence(bool useColor = false) { beginSequence(nullptr, useColor); }
             void endSequence();
+            int getSequenceBatchCount() const {return batchMap ? batchMap->map.size() : 0;}
             void replaySequence(FontSequence *sequence);
             inline void replaySequence(FontSequence &sequence) { replaySequence(&sequence); }
             
