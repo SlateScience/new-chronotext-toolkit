@@ -45,7 +45,6 @@ ifdef CHR_USE_ZFONT
     LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/zf/scrptrun.cpp
     LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/zf/TextItemizer.cpp
     LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/zf/VirtualFont.cpp
-    LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/zf/FontLayer.cpp
 endif
 
 ifdef CHR_USE_INCUBATOR_UI
