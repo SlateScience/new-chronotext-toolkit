@@ -133,8 +133,8 @@ namespace chronotext
     
     void CinderApp::pause()
     {
-        sketch->event(CinderSketch::EVENT_CONTEXT_LOST);
         sketch->stop(CinderSketch::FLAG_APP_PAUSED);
+        sketch->event(CinderSketch::EVENT_CONTEXT_LOST);
     }
     
 #endif
