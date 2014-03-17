@@ -65,6 +65,7 @@ namespace chronotext
         virtual double getElapsedSeconds() const = 0;
         virtual uint32_t getElapsedFrames() const = 0;
         
+        virtual float getWindowDensity() const = 0;
         virtual int getWindowWidth() const = 0;
         virtual int getWindowHeight() const = 0;
         virtual ci::Vec2f getWindowCenter() const = 0;
@@ -72,7 +73,6 @@ namespace chronotext
         virtual float getWindowAspectRatio() const = 0;
         virtual ci::Area getWindowBounds() const = 0;
         virtual float getWindowContentScale() const = 0;
-        virtual float getWindowDensity() const = 0;
         virtual int getWindowAALevel() const = 0;
         
         WindowInfo getWindowInfo() const

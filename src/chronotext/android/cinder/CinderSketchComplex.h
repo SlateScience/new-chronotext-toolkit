@@ -30,6 +30,7 @@ namespace chronotext
         double getElapsedSeconds() const;
         uint32_t getElapsedFrames() const;
         
+        float getWindowDensity() const;
         int getWindowWidth() const;
         int getWindowHeight() const;
         ci::Vec2f getWindowCenter() const;
@@ -37,7 +38,6 @@ namespace chronotext
         float getWindowAspectRatio() const;
         ci::Area getWindowBounds() const;
         float getWindowContentScale() const { return 1; }
-        float getWindowDensity() const;
         int getWindowAALevel() const { return 0; }
         
         void sendMessageToDelegate(int what, const std::string &body = "");

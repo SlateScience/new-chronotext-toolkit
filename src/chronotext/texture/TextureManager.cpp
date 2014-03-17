@@ -35,7 +35,6 @@ namespace chronotext
         {
             auto texture = make_shared<Texture>(textureRequest);
             textures[textureRequest] = texture;
-            
             return texture;
         }
     }

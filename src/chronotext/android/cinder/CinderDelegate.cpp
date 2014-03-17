@@ -145,8 +145,9 @@ namespace chronotext
         mLastRawAccel = acceleration;
     }
     
-    void CinderDelegate::setup(int width, int height, int displayRotation)
+    void CinderDelegate::setup(float density, int width, int height, int displayRotation)
     {
+        mDensity = density;
         mWidth = width;
         mHeight = height;
         mDisplayRotation = displayRotation;
@@ -285,7 +286,12 @@ namespace chronotext
         return mFrameCount;
     }
     
-    int CinderDelegate::getWindowWidth() const
+    float CinderDelegate::getWindowDensity() const
+    {
+        return mDensity;
+    }
+    
+   int CinderDelegate::getWindowWidth() const
     {
         return mWidth;
     }
@@ -313,11 +319,6 @@ namespace chronotext
     Area CinderDelegate::getWindowBounds() const
     {
         return Area(0, 0, mWidth, mHeight);
-    }
-    
-    float CinderDelegate::getWindowDensity() const
-    {
-        return 0; // TODO
     }
     
     void CinderDelegate::receiveMessageFromSketch(int what, const string &body)

@@ -13,6 +13,9 @@ using namespace std;
 using namespace ci;
 using namespace app;
 
+// Low density by default - close to a typical desktop monitor
+#define DEFAULT_DESKTOP_DENSITY 120
+
 namespace chronotext
 {
     CinderSketchSimple::CinderSketchSimple(void *context, void *delegate)
@@ -20,11 +23,10 @@ namespace chronotext
     CinderSketchBase(),
     context(static_cast<AppNative*>(context)),
     delegate(static_cast<CinderApp*>(delegate))
-    {}
-    
-    float CinderSketchSimple::getWindowDensity() const
     {
-        return 0; // TODO, SEE: http://en.wikipedia.org/wiki/List_of_displays_by_pixel_density
+        // put here code that would detect the monitor's DPI, if possible
+        mDensity = DEFAULT_DESKTOP_DENSITY;
+        // TODO, SEE: http://en.wikipedia.org/wiki/List_of_displays_by_pixel_density
     }
     
     int CinderSketchSimple::getWindowAALevel() const
