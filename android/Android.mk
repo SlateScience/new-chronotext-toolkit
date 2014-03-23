@@ -9,6 +9,7 @@ LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/android/cinder/CinderSketchComplex.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/cinder/CinderApp.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/FileSystem.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/InputSource.cpp
+LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/ResourceItem.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/FontMatrix.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/FontManager.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/Font.cpp

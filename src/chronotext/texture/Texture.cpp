@@ -16,6 +16,7 @@ namespace chronotext
 {
     Texture::Texture(InputSourceRef inputSource, bool useMipmap, TextureRequest::Flags flags)
     :
+    ResourceItem(inputSource),
     request(TextureRequest(inputSource, useMipmap, flags))
     {
         setTarget(TextureHelper::loadTexture(request));
@@ -23,6 +24,7 @@ namespace chronotext
     
     Texture::Texture(const TextureRequest &textureRequest)
     :
+    ResourceItem(textureRequest.inputSource),
     request(textureRequest)
     {
         setTarget(TextureHelper::loadTexture(request));
@@ -30,6 +32,7 @@ namespace chronotext
     
     Texture::Texture(const TextureData &textureData)
     :
+    ResourceItem(textureData.request.inputSource),
     request(textureData.request)
     {
         setTarget(TextureHelper::uploadTextureData(textureData));

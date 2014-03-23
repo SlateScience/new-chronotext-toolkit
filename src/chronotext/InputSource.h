@@ -103,7 +103,7 @@ namespace chronotext
         std::string getFilePathHint() const;
         void setFilePathHint(const std::string &hint);
 
-        std::string getURI();
+        std::string getURI() const;
 
     protected:
         int type;
@@ -112,7 +112,6 @@ namespace chronotext
         ci::fs::path filePath;
         ci::fs::path relativePath;
         std::string filePathHint;
-        std::string uri;
     };
 }
 

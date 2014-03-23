@@ -333,12 +333,13 @@ namespace chronotext
         filePathHint = hint;
     }
     
-    string InputSource::getURI()
+    string InputSource::getURI() const
     {
         /*
          * COMPUTING THE VALUE ONLY ONCE ALLOWS FOR EFFICIENT USAGE IN std::map KEYS
          */
-        if (uri.empty())
+        string uri;
+        
         {
             switch (type)
             {

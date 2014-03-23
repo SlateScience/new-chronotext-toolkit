@@ -8,13 +8,14 @@
 
 #pragma once
 
+#include "chronotext/ResourceItem.h"
 #include "chronotext/texture/TextureData.h"
 
 namespace chronotext
 {
     typedef std::shared_ptr<class Texture> TextureRef;
     
-    class Texture
+    class Texture : public ResourceItem
     {
     public:
         class Exception : public std::exception
