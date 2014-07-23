@@ -100,9 +100,14 @@ static BOOL isIpadMini()
     
     NSString *machName = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
     
+    NSLog(@"machName=%@", machName);
+    
     return (   [machName isEqualToString:@"iPad2,5"]
             || [machName isEqualToString:@"iPad2,6"]
-            || [machName isEqualToString:@"iPad2,7"]);
+            || [machName isEqualToString:@"iPad2,7"]
+            || [machName isEqualToString:@"iPad4,4"]
+            || [machName isEqualToString:@"iPad4,5"]
+            || [machName isEqualToString:@"iPad4,6"]);
 }
 
 - (void) setup
@@ -125,8 +130,15 @@ static BOOL isIpadMini()
             break;
     }
     
-    int frameWidth = view.frame.size.width;
-    int frameHeight = view.frame.size.height;
+    float scale = 1;
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        scale = [[UIScreen mainScreen] scale];
+    }
+    
+    NSLog(@"dpi scale=%f", scale);
+    
+    int frameWidth = view.frame.size.width * scale;
+    int frameHeight = view.frame.size.height * scale;
     
     windowInfo.size.x = mx * frameWidth + my * frameHeight;
     windowInfo.size.y = mx * frameHeight + my * frameWidth;
@@ -148,11 +160,6 @@ static BOOL isIpadMini()
     
     windowInfo.density = 0; // TODO
     
-    float scale = 1;
-    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
-        scale = [[UIScreen mainScreen] scale];
-    }
-
     if(isIpadMini()) {
         windowInfo.density = 163 * scale;
     } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
