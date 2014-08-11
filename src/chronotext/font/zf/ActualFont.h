@@ -10,7 +10,7 @@
 
 #include "chronotext/font/zf/GlyphData.h"
 #include "chronotext/font/zf/FontTexture.h"
-#include "chronotext/font/FontMatrix.h"
+#include "chronotext/quad/QuadMatrix.h"
 #include "chronotext/InputSource.h"
 
 #include "hb.h"
@@ -126,6 +126,7 @@ namespace chronotext
             ~ActualFont(); // MUST BE PUBLIC BECAUSE OF unique_ptr
 
             bool isSpace(hb_codepoint_t codepoint) const;
+            hb_codepoint_t getCodepoint(FT_ULong charCode) const;
             std::string getFullName() const;
 
         protected:
@@ -156,7 +157,7 @@ namespace chronotext
             void reloadTextures();
             size_t getTextureMemoryUsage() const;
             
-            Glyph* fillQuad(GlyphQuad &quad, const Shape &shape, const ci::Vec2f &position, float sizeRatio);
+            Glyph* fillQuad(Quad &quad, const Shape &shape, const ci::Vec2f &position, float sizeRatio);
             Glyph* getGlyph(hb_codepoint_t codepoint);
             Glyph* createGlyph(hb_codepoint_t codepoint);
             void reloadTexture(FontTexture *texture);

@@ -89,6 +89,18 @@ namespace chronotext
             return spaceSeparators.count(codepoint);
         }
         
+        hb_codepoint_t ActualFont::getCodepoint(FT_ULong charCode) const
+        {
+            if (ftFace)
+            {
+                return (hb_codepoint_t)FT_Get_Char_Index(ftFace, charCode);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        
         string ActualFont::getFullName() const
         {
             if (ftFace)
@@ -263,7 +275,7 @@ namespace chronotext
             return total;
         }
         
-        ActualFont::Glyph* ActualFont::fillQuad(GlyphQuad &quad, const Shape &shape, const Vec2f &position, float sizeRatio)
+        ActualFont::Glyph* ActualFont::fillQuad(Quad &quad, const Shape &shape, const Vec2f &position, float sizeRatio)
         {
             auto glyph = shape.glyph; // VALID ONLY IF THE PARENT LineLayout HAVE BEEN PREVIOUSLY PRELOADED
             

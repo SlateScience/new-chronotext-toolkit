@@ -114,6 +114,16 @@ namespace chronotext
             }
         }
         
+        float VirtualFont::getHeight(const LineLayout &layout) const
+        {
+            return layout.maxHeight * sizeRatio;
+        }
+        
+        float VirtualFont::getAscent(const LineLayout &layout) const
+        {
+            return layout.maxAscent * sizeRatio;
+        }
+        
         float VirtualFont::getDescent(const LineLayout &layout) const
         {
             return layout.maxDescent * sizeRatio;
@@ -167,29 +177,21 @@ namespace chronotext
             return cluster.combinedAdvance * sizeRatio;
         }
         
-        float VirtualFont::getHeight(const LineLayout &layout) const
-        {
-            return layout.maxHeight * sizeRatio;
-        }
-        
-        float VirtualFont::getAscent(const LineLayout &layout) const
-        {
-            return layout.maxAscent * sizeRatio;
-        }
-        
         LineLayout* VirtualFont::createLineLayout(const string &text, const string &langHint, hb_direction_t overallDirection)
         {
-            return createLineLayout(itemizer.processLine(text, langHint, overallDirection));
+            TextLine line(text, langHint, overallDirection);
+            itemizer.processLine(line);
+            return createLineLayout(line, boost::make_iterator_range(line.runs));
         }
         
-        LineLayout* VirtualFont::createLineLayout(const TextLine &line)
+        LineLayout* VirtualFont::createLineLayout(const TextLine &line, boost::iterator_range<vector<TextRun>::const_iterator> range)
         {
             auto layout = new LineLayout(this, line.langHint, line.overallDirection);
             
             map<hb_codepoint_t, Cluster> clusterMap;
             auto buffer = hb_buffer_create();
             
-            for (auto &run : line.runs)
+            for (auto &run : range)
             {
                 clusterMap.clear();
                 
@@ -231,13 +233,20 @@ namespace chronotext
                                     auto offset = Vec2f(glyphPositions[i].x_offset, -glyphPositions[i].y_offset) * font->scale;
                                     float advance = glyphPositions[i].x_advance * font->scale.x;
                                     
+                                    if (!properties.useMipmap)
+                                    {
+                                        offset.x = snap(offset.x);
+                                        offset.y = snap(offset.y);
+                                        advance = snap(advance);
+                                    }
+                                    
                                     if (clusterFound)
                                     {
                                         it->second.addShape(codepoint, offset, advance);
                                     }
                                     else
                                     {
-                                        clusterMap.insert(make_pair(cluster, Cluster(font, codepoint, offset, advance)));
+                                        clusterMap.insert(make_pair(cluster, Cluster(font, run.tag, codepoint, offset, advance)));
                                     }
                                 }
                             }
@@ -335,7 +344,7 @@ namespace chronotext
             hasClip = false;
         }
         
-        FontMatrix* VirtualFont::getMatrix()
+        QuadMatrix* VirtualFont::getMatrix()
         {
             return &matrix;
         }
@@ -347,38 +356,32 @@ namespace chronotext
         
         void VirtualFont::begin(bool useColor)
         {
-            if (began == 0)
+            glEnable(GL_TEXTURE_2D);
+            
+            if (useColor)
             {
-                glEnable(GL_TEXTURE_2D);
-                
-                if (useColor)
-                {
-                    glEnableClientState(GL_COLOR_ARRAY);
-                }
-                else
-                {
-                    gl::color(color);
-                }
-                
-                glEnableClientState(GL_VERTEX_ARRAY);
-                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                glEnableClientState(GL_COLOR_ARRAY);
             }
+            else
+            {
+                gl::color(color);
+            }
+            
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         }
         
         void VirtualFont::end(bool useColor)
         {
-            if (began == 0)
+            glDisable(GL_TEXTURE_2D);
+            
+            if (useColor)
             {
-                glDisable(GL_TEXTURE_2D);
-                
-                if (useColor)
-                {
-                    glDisableClientState(GL_COLOR_ARRAY);
-                }
-                
-                glDisableClientState(GL_VERTEX_ARRAY);
-                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                glDisableClientState(GL_COLOR_ARRAY);
             }
+            
+            glDisableClientState(GL_VERTEX_ARRAY);
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         }
         
         void VirtualFont::beginSequence(FontSequence *sequence, bool useColor)
@@ -389,7 +392,7 @@ namespace chronotext
                 
                 if (!batchMap)
                 {
-                    batchMap = unique_ptr<GlyphBatchMap>(new GlyphBatchMap);
+                    batchMap = unique_ptr<QuadBatchMap<FontTexture>>(new QuadBatchMap<FontTexture>);
                 }
                 else
                 {
@@ -438,7 +441,7 @@ namespace chronotext
             end(sequence->useColor);
         }
         
-        void VirtualFont::incrementSequence(GlyphBatch *batch)
+        void VirtualFont::incrementSequence(QuadBatch *batch)
         {
             if (sequenceUseColor)
             {
@@ -454,12 +457,14 @@ namespace chronotext
                 }
                 else
                 {
+                    begin(sequenceUseColor);
                     batchMap->flush(getIndices(), sequenceUseColor, anisotropy);
+                    end(sequenceUseColor);
                 }
                 
                 if (!batchMap)
                 {
-                    batchMap = unique_ptr<GlyphBatchMap>(new GlyphBatchMap);
+                    batchMap = unique_ptr<QuadBatchMap<FontTexture>>(new QuadBatchMap<FontTexture>);
                 }
                 else
                 {
@@ -468,7 +473,7 @@ namespace chronotext
             }
         }
         
-        bool VirtualFont::clipQuad(GlyphQuad &quad, FontTexture *texture) const
+        bool VirtualFont::clipQuad(Quad &quad, FontTexture *texture) const
         {
             return quad.clip(clipRect, texture->getSize() * sizeRatio);
         }
@@ -477,8 +482,10 @@ namespace chronotext
         {
             for (auto &shape : cluster.shapes)
             {
-                GlyphQuad quad;
-                auto glyph = cluster.font->fillQuad(quad, shape, position.xy(), sizeRatio);
+                Vec2f p = properties.useMipmap ? position.xy() : Vec2f(snap(position.x), snap(position.y));
+                
+                Quad quad;
+                auto glyph = cluster.font->fillQuad(quad, shape, p, sizeRatio);
                 
                 if (glyph)
                 {
@@ -496,7 +503,7 @@ namespace chronotext
         {
             for (auto &shape : cluster.shapes)
             {
-                GlyphQuad quad;
+                Quad quad;
                 auto glyph = cluster.font->fillQuad(quad, shape, position, sizeRatio);
                 
                 if (glyph)
@@ -536,6 +543,18 @@ namespace chronotext
                 default:
                 case VirtualFont::STYLE_REGULAR:
                     return "regular";
+            }
+        }
+        
+        float VirtualFont::snap(float value)
+        {
+            if (value < 0)
+            {
+                return math<float>::ceil(value - 0.5f);
+            }
+            else
+            {
+                return math<float>::floor(value + 0.5f);
             }
         }
     }

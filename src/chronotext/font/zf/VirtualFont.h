@@ -8,11 +8,13 @@
 
 #pragma once
 
-#include "chronotext/font/FontMatrix.h"
+#include "chronotext/quad/QuadMatrix.h"
 #include "chronotext/font/zf/ActualFont.h"
 #include "chronotext/font/zf/LayoutCache.h"
 #include "chronotext/font/zf/TextItemizer.h"
 #include "chronotext/font/zf/FontSequence.h"
+
+#include <boost/range/iterator_range.hpp>
 
 #include <set>
 #include <map>
@@ -114,7 +116,7 @@ namespace chronotext
              * THE RETURNED INSTANCES ARE NOT MANAGED AND SHOULD BE DELETED BY THE CALLER
              */
             LineLayout* createLineLayout(const std::string &text, const std::string &langHint = "", hb_direction_t overallDirection = HB_DIRECTION_INVALID);
-            LineLayout* createLineLayout(const TextLine &line);
+            LineLayout* createLineLayout(const TextLine &line, boost::iterator_range<std::vector<TextRun>::const_iterator> range);
             
             std::shared_ptr<LineLayout> getCachedLineLayout(const std::string &text, const std::string &langHint = "", hb_direction_t overallDirection = HB_DIRECTION_INVALID);
             
@@ -132,14 +134,13 @@ namespace chronotext
             void setClip(float x1, float y1, float x2, float y2);
             void clearClip();
             
-            FontMatrix* getMatrix();
+            QuadMatrix* getMatrix();
             const GLushort* getIndices() const;
             
             void beginSequence(FontSequence *sequence, bool useColor = false);
             inline void beginSequence(FontSequence &sequence, bool useColor = false) { beginSequence(&sequence, useColor); }
             inline void beginSequence(bool useColor = false) { beginSequence(nullptr, useColor); }
             void endSequence();
-            int getSequenceBatchCount() const {return batchMap ? batchMap->map.size() : 0;}
             void replaySequence(FontSequence *sequence);
             inline void replaySequence(FontSequence &sequence) { replaySequence(&sequence); }
             
@@ -151,6 +152,7 @@ namespace chronotext
             
             static Style styleStringToEnum(const std::string &style);
             static std::string styleEnumToString(Style style);
+            static float snap(float value);
             
             friend class FontManager;
             
@@ -164,14 +166,14 @@ namespace chronotext
 
             Properties properties;
             const std::vector<GLushort> &indices;
-            FontMatrix matrix;
+            QuadMatrix matrix;
             
             float anisotropy;
             
             int began;
             bool sequenceUseColor;
             FontSequence *sequence;
-            std::unique_ptr<GlyphBatchMap> batchMap;
+            std::unique_ptr<QuadBatchMap<FontTexture>> batchMap;
             
             FontSet defaultFontSet; // ALLOWING getFontSet() TO RETURN CONST VALUES
             std::map<std::string, FontSet> fontSetMap;
@@ -184,8 +186,8 @@ namespace chronotext
             void begin(bool useColor = false);
             void end(bool useColor = false);
             
-            void incrementSequence(GlyphBatch *batch);
-            bool clipQuad(GlyphQuad &quad, FontTexture *texture) const;
+            void incrementSequence(QuadBatch *batch);
+            bool clipQuad(Quad &quad, FontTexture *texture) const;
         };
     }
 }

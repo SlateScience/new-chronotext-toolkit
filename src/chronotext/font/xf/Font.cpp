@@ -296,7 +296,7 @@ namespace chronotext
             }
         }
         
-        FontMatrix* Font::getMatrix()
+        QuadMatrix* Font::getMatrix()
         {
             return &matrix;
         }
@@ -308,47 +308,41 @@ namespace chronotext
         
         void Font::begin(bool useColor)
         {
-            if (began == 0)
+            glEnable(GL_TEXTURE_2D);
+            
+            if (useColor)
             {
-                glEnable(GL_TEXTURE_2D);
-                
-                if (useColor)
-                {
-                    glEnableClientState(GL_COLOR_ARRAY);
-                }
-                else
-                {
-                    gl::color(color);
-                }
-                
-                glEnableClientState(GL_VERTEX_ARRAY);
-                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                
-                // ---
-                
-                texture->bind(); // RELOADS TEXTURE, IF NECESSARY
-                
-                if (anisotropy)
-                {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
-                }
+                glEnableClientState(GL_COLOR_ARRAY);
+            }
+            else
+            {
+                gl::color(color);
+            }
+            
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            
+            // ---
+            
+            texture->bind(); // RELOADS TEXTURE, IF NECESSARY
+            
+            if (anisotropy)
+            {
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
             }
         }
         
         void Font::end(bool useColor)
         {
-            if (began == 0)
+            glDisable(GL_TEXTURE_2D);
+            
+            if (useColor)
             {
-                glDisable(GL_TEXTURE_2D);
-                
-                if (useColor)
-                {
-                    glDisableClientState(GL_COLOR_ARRAY);
-                }
-                
-                glDisableClientState(GL_VERTEX_ARRAY);
-                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                glDisableClientState(GL_COLOR_ARRAY);
             }
+            
+            glDisableClientState(GL_VERTEX_ARRAY);
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         }
         
         void Font::beginSequence(FontSequence *sequence, bool useColor)
@@ -359,7 +353,7 @@ namespace chronotext
                 
                 if (!batch)
                 {
-                    batch = unique_ptr<GlyphBatch>(new GlyphBatch);
+                    batch = unique_ptr<QuadBatch>(new QuadBatch);
                 }
                 else
                 {
@@ -370,10 +364,6 @@ namespace chronotext
                 {
                     this->sequence = sequence;
                     sequence->begin(useColor);
-                }
-                else
-                {
-                    begin(useColor);
                 }
                 
                 clearClip();
@@ -398,6 +388,7 @@ namespace chronotext
                 }
                 else
                 {
+                    begin(sequenceUseColor);
                     batch->flush(getIndices(), sequenceUseColor);
                     end(sequenceUseColor);
                 }
@@ -427,12 +418,14 @@ namespace chronotext
                 }
                 else
                 {
+                    begin(sequenceUseColor);
                     batch->flush(getIndices(), sequenceUseColor);
+                    end(sequenceUseColor);
                 }
                 
                 if (!batch)
                 {
-                    batch = unique_ptr<GlyphBatch>(new GlyphBatch);
+                    batch = unique_ptr<QuadBatch>(new QuadBatch);
                 }
                 else
                 {
@@ -441,7 +434,7 @@ namespace chronotext
             }
         }
         
-        bool Font::fillQuad(GlyphQuad &quad, int glyphIndex, float x, float y) const
+        bool Font::fillQuad(Quad &quad, int glyphIndex, float x, float y) const
         {
             if (glyphIndex < 0)
             {
@@ -492,20 +485,20 @@ namespace chronotext
             }
         }
         
-        bool Font::clipQuad(GlyphQuad &quad) const
+        bool Font::clipQuad(Quad &quad) const
         {
             return quad.clip(clipRect, texture->getSize() * sizeRatio / axis);
         }
 
         void Font::addGlyph(int glyphIndex, float x, float y, float z)
         {
-            GlyphQuad quad;
+            Quad quad;
             
             if (fillQuad(quad, glyphIndex, x, y))
             {
                 if (!hasClip || clipQuad(quad))
                 {
-                    batch->addQuad(quad);
+                    batch->addQuad(quad, z);
                     incrementSequence();
                 }
             }
@@ -513,7 +506,7 @@ namespace chronotext
         
         void Font::addTransformedGlyph(int glyphIndex, float x, float y)
         {
-            GlyphQuad quad;
+            Quad quad;
             
             if (fillQuad(quad, glyphIndex, x, y))
             {
