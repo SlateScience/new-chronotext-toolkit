@@ -8,8 +8,6 @@
 
 package org.chronotext.gl;
 
-import java.util.Vector;
-
 public class Touch
 {
   public int index;

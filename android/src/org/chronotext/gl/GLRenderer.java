@@ -14,9 +14,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import org.chronotext.gl.Touch;
-import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.util.DisplayMetrics;
 import android.view.View;
 
 public abstract class GLRenderer implements GLSurfaceView.Renderer
