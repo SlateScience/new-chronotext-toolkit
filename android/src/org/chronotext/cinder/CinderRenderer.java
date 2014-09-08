@@ -16,9 +16,7 @@ import org.chronotext.gl.GLRenderer;
 import org.chronotext.gl.Touch;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.view.Display;
-import android.view.Surface;
 import android.view.WindowManager;
 
 /*
