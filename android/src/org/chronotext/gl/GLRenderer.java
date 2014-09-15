@@ -56,6 +56,25 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
 
   public void onSurfaceChanged(GL10 gl, int w, int h)
   {
+    /*
+     * THE SYSTEM IS CALLING onSurfaceChanged() FAR MORE THAN EXPECTED, APPARENTLY
+     * AS MEAN TO COPE WITH THE "CONFIGURATION-CHANGE / ORIENTATION-CHANGE" HELL
+     *
+     * IN ORDER TO AVOID "SCREEN DEFORMATION" WHEN RETURNING FROM SLEEP AT A DIFFERENT ORIENTATION
+     * IT IS THEREFORE MANDATORY TO CALL glViewport() AT *EACH* onSurfaceChanged()
+     *
+     * WARNING:
+     *
+     * THE "FULL SOLUTION" WOULD REQUIRE ADDING A resize() CALLBACK TO THE GLRenderer
+     * INTERFACE AND TO INVOKE IT AFTER EACH glViewport
+     * 
+     * CURRENTLY, CinderDelegate::resize() IS TIED TO CinderDelegate::setup()
+     * AN CALLED ONLY WHEN THE GLView IS ATTACHED OR WHEN THE GL-CONTEXT IS RECREATED
+     *
+     * IT IS NOT SUPPOSED TO CAUSE PROBLEMS IF THE APPLICATION IS NOT USING glViewport() WITHIN resize()
+     */
+    gl.glViewport(0, 0, w, h);
+
     if (!initialized)
     {
       setup(gl, mDensity, w, h);
