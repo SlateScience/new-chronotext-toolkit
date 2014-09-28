@@ -41,8 +41,17 @@ namespace chronotext
         float maxX = numeric_limits<float>::min();
         float maxY = numeric_limits<float>::min();
         
-        for (auto &point : polygon)
+        if (polygon.empty()) {
+            return Rectf(minX, minY, maxX, maxY);
+        }
+        
+        minX = maxX = polygon[0].x;
+        minY = maxY = polygon[0].y;
+        
+        for (int i = 1; i < polygon.size(); i++)
         {
+            const Vec2f& point = polygon[i];
+            
             if (point.x < minX) minX = point.x;
             if (point.y < minY) minY = point.y;
             
