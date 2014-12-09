@@ -12,14 +12,14 @@
 
 namespace chronotext
 {
-    typedef std::shared_ptr<class ResourceItem> ResourceItemRef;
-    
     class ResourceItem
     {
     protected:
-        chr::InputSourceRef inputSource;
+        chr::InputSource::Ref inputSource;
     public:
-        ResourceItem(InputSourceRef _inputSource);
+        typedef std::shared_ptr<class ResourceItem> Ref;
+
+        ResourceItem(InputSource::Ref _inputSource);
         ci::fs::path getFilePathHint() const;
         std::string getURI() const;
     };

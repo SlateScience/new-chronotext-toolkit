@@ -9,7 +9,7 @@
 #include "ResourceItem.h"
 
 namespace chronotext {
-    ResourceItem::ResourceItem(InputSourceRef _inputSource) :
+    ResourceItem::ResourceItem(InputSource::Ref _inputSource) :
         inputSource(_inputSource)
     {
     }

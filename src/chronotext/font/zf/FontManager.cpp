@@ -45,7 +45,7 @@ namespace chronotext
 #endif
         }
         
-        void FontManager::loadConfig(InputSourceRef source)
+        void FontManager::loadConfig(InputSource::Ref source)
         {
             if (!globalMap.empty() || !aliases.empty() || hasDefaultFont)
             {
@@ -188,7 +188,7 @@ namespace chronotext
             throw invalid_argument(string("UNDEFINED FONT: ") + name + " " + VirtualFont::styleEnumToString(style));
         }
         
-        shared_ptr<VirtualFont> FontManager::getCachedFont(InputSourceRef source, const VirtualFont::Properties &properties)
+        shared_ptr<VirtualFont> FontManager::getCachedFont(InputSource::Ref source, const VirtualFont::Properties &properties)
         {
             auto key = make_pair(source->getURI(), properties);
             auto it = virtualFonts.find(key);

@@ -18,7 +18,7 @@ namespace chronotext
         return getTexture(InputSource::getResource(resourceName), useMipmap, flags);
     }
     
-    TextureRef TextureManager::getTexture(InputSourceRef inputSource, bool useMipmap, TextureRequest::Flags flags)
+    TextureRef TextureManager::getTexture(InputSource::Ref inputSource, bool useMipmap, TextureRequest::Flags flags)
     {
         return getTexture(TextureRequest(inputSource, useMipmap, flags));
     }

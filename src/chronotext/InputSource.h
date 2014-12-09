@@ -16,11 +16,11 @@
 
 namespace chronotext
 {
-    typedef std::shared_ptr<class InputSource> InputSourceRef;
-    
     class InputSource
     {
     public:
+        typedef std::shared_ptr<InputSource> Ref;
+
         class Exception : public std::exception
         {
             std::string message;
@@ -51,7 +51,7 @@ namespace chronotext
          * OSX, IOS: isFile() WILL RETURN true
          * ANDROID: isFile() WILL RETURN false
          */
-        static InputSourceRef getResource(const ci::fs::path &relativePath);
+        static InputSource::Ref getResource(const ci::fs::path &relativePath);
         static ci::DataSourceRef loadResource(const ci::fs::path &relativePath);
         
         /*
@@ -60,7 +60,7 @@ namespace chronotext
          *
          * isFile() WILL RETURN false
          */
-        static InputSourceRef getResource(const std::string &resourceName, int mswID, const std::string &mswType);
+        static InputSource::Ref getResource(const std::string &resourceName, int mswID, const std::string &mswType);
         static ci::DataSourceRef loadResource(const std::string &resourceName, int mswID, const std::string &mswType);
         
         /*
@@ -77,16 +77,16 @@ namespace chronotext
          * - THE ASSETS WILL BE PACKAGED INSIDE THE APK
          * - isFile() WILL RETURN false
          */
-        static InputSourceRef getAsset(const ci::fs::path &relativePath);
+        static InputSource::Ref getAsset(const ci::fs::path &relativePath);
         static ci::DataSourceRef loadAsset(const ci::fs::path &relativePath);
 
-        static InputSourceRef get(const std::string &uri);
+        static InputSource::Ref get(const std::string &uri);
         static ci::DataSourceRef load(const std::string &uri);
 
-        static InputSourceRef getFile(const ci::fs::path &filePath);
+        static InputSource::Ref getFile(const ci::fs::path &filePath);
         static ci::DataSourceRef loadFile(const ci::fs::path &filePath);
 
-        static InputSourceRef getFileInDocuments(const ci::fs::path &relativePath);
+        static InputSource::Ref getFileInDocuments(const ci::fs::path &relativePath);
         static ci::DataSourceRef loadFileInDocuments(const ci::fs::path &relativePath);
 
         InputSource(int type)
@@ -95,7 +95,7 @@ namespace chronotext
         {}
 
         ci::DataSourceRef loadDataSource();
-        InputSourceRef getSubSource(const ci::fs::path &subPath);
+        InputSource::Ref getSubSource(const ci::fs::path &subPath);
         
         bool isFile() const;
         ci::fs::path getFilePath() const;

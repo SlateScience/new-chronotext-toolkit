@@ -14,7 +14,7 @@ using namespace ci;
 
 namespace chronotext
 {
-    Texture::Texture(InputSourceRef inputSource, bool useMipmap, TextureRequest::Flags flags)
+    Texture::Texture(InputSource::Ref inputSource, bool useMipmap, TextureRequest::Flags flags)
     :
     ResourceItem(inputSource),
     request(TextureRequest(inputSource, useMipmap, flags))

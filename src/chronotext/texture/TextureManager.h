@@ -19,7 +19,7 @@ namespace chronotext
     {
     public:
         TextureRef getTexture(const std::string &resourceName, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
-        TextureRef getTexture(InputSourceRef inputSource, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
+        TextureRef getTexture(InputSource::Ref inputSource, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
         TextureRef getTexture(const TextureRequest &textureRequest);
         
         bool remove(TextureRef texture);
