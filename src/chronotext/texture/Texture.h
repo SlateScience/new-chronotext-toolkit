@@ -44,16 +44,16 @@ namespace chronotext
         TextureData fetchTextureData();
         void uploadTextureData(const TextureData &textureData);
         
-        int getId() const;
         void bind();
-        
         void begin();
         void end();
         
         void drawFromCenter();
         void draw(float rx = 0, float ry = 0);
         void drawInRect(const ci::Rectf &rect, float ox = 0, float oy = 0);
-        
+
+        uint32_t getId() const;
+
         int getWidth() const;
         int getHeight() const;
         ci::Vec2i getSize() const;
@@ -70,7 +70,7 @@ namespace chronotext
     protected:
         ci::gl::TextureRef target;
         
-        GLuint id;
+        uint32_t textureId;
         int width;
         int height;
         float maxU;

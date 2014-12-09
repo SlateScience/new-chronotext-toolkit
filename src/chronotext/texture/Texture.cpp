@@ -65,14 +65,9 @@ namespace chronotext
         setTarget(TextureHelper::uploadTextureData(textureData));
     }
     
-    int Texture::getId() const
-    {
-        return id;
-    }
-    
     void Texture::bind()
     {
-        glBindTexture(GL_TEXTURE_2D, id);
+        glBindTexture(GL_TEXTURE_2D, textureId);
     }
     
     void Texture::begin()
@@ -81,7 +76,7 @@ namespace chronotext
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnable(GL_TEXTURE_2D);
         
-        glBindTexture(GL_TEXTURE_2D, id);
+        glBindTexture(GL_TEXTURE_2D, textureId);
     }
     
     void Texture::end()
@@ -153,6 +148,11 @@ namespace chronotext
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
     
+    uint32_t Texture::getId() const
+    {
+        return textureId;
+    }
+    
     int Texture::getWidth() const
     {
         return width;
@@ -202,11 +202,13 @@ namespace chronotext
     {
         target = texture;
         
-        id = texture->getId();
+        textureId = texture->getId();
         width = texture->getWidth();
         height = texture->getHeight();
         maxU = texture->getMaxU();
         maxV = texture->getMaxV();
+        
+        memoryUsed = width * height * 4 * (request.useMipmap ? 1.33f : 1);
     }
 
     bool Texture::hasMipmap() const
