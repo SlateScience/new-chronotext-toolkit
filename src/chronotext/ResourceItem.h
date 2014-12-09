@@ -14,18 +14,16 @@ namespace chronotext
 {
     class ResourceItem
     {
-    protected:
-        chr::InputSource::Ref inputSource;
-        unsigned int memoryUsed;
-        
     public:
         typedef std::shared_ptr<class ResourceItem> Ref;
+
+        chr::InputSource::Ref inputSource;
+        unsigned int memoryUsed;
 
         ResourceItem(InputSource::Ref _inputSource);
         
         ci::fs::path getFilePathHint() const;
         std::string getURI() const;
-        size_t getMemoryUsed() const { return memoryUsed; }
     };
 }
 
