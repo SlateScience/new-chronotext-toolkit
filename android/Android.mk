@@ -10,10 +10,6 @@ LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/android/cinder/CinderSketchComplex.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/cinder/CinderApp.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/FileSystem.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/InputSource.cpp
-LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/FontManager.cpp
-LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/Font.cpp
-LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/FontSequence.cpp
-LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/TextHelper.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/os/Handler.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/os/SuperHandler.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/path/Hairline.cpp
@@ -48,6 +44,11 @@ ifdef CHR_USE_ZFONT
     LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/zf/scrptrun.cpp
     LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/zf/TextItemizer.cpp
     LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/zf/VirtualFont.cpp
+else
+    LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/FontManager.cpp
+    LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/Font.cpp
+    LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/FontSequence.cpp
+    LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/font/xf/TextHelper.cpp
 endif
 
 ifdef CHR_USE_INCUBATOR_UI

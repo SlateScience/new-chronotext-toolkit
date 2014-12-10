@@ -22,14 +22,14 @@ namespace chronotext
         init(InputSource::getResource(resourceName), useMipmap);
     }
     
-    TextureAtlas::TextureAtlas(TextureManager &textureManager, InputSourceRef inputSource, bool useMipmap)
+    TextureAtlas::TextureAtlas(TextureManager &textureManager, InputSource::Ref inputSource, bool useMipmap)
     :
     textureManager(textureManager)
     {
         init(inputSource, useMipmap);
     }
     
-    void TextureAtlas::init(InputSourceRef inputSource, bool useMipmap)
+    void TextureAtlas::init(InputSource::Ref inputSource, bool useMipmap)
     {
         XmlTree doc(inputSource->loadDataSource());
         

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "Effect.h"
+#include "chronotext/incubator/sound/Effect.h"
 
 #include <map>
 #include <set>

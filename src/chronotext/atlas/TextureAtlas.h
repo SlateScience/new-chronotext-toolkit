@@ -30,7 +30,7 @@ namespace chronotext
         TextureRef texture;
         
         TextureAtlas(TextureManager &textureManager, const std::string &resourceName, bool useMipmap = false);
-        TextureAtlas(TextureManager &textureManager, InputSourceRef inputSource, bool useMipmap = false);
+        TextureAtlas(TextureManager &textureManager, InputSource::Ref inputSource, bool useMipmap = false);
         
         SpriteRef getSprite(const std::string &path) const;
         std::vector<SpriteRef> getAnimationSprites(const std::string &path) const;
@@ -45,7 +45,7 @@ namespace chronotext
         TextureManager &textureManager;
         std::map<std::string, SpriteRef> sprites;
         
-        void init(InputSourceRef inputSource, bool useMipmap);
+        void init(InputSource::Ref inputSource, bool useMipmap);
     };
 }
 

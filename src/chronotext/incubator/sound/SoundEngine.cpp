@@ -7,7 +7,7 @@
  */
 
 #include "SoundEngine.h"
-#include "FMODException.h"
+#include "chronotext/incubator/sound/FMODException.h"
 
 using namespace std;
 using namespace ci;
