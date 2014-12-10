@@ -8,14 +8,13 @@
 
 #pragma once
 
-#include "chronotext/ResourceItem.h"
 #include "chronotext/texture/TextureData.h"
 
 namespace chronotext
 {
     typedef std::shared_ptr<class Texture> TextureRef;
     
-    class Texture : public ResourceItem
+    class Texture
     {
     public:
         class Exception : public std::exception
@@ -53,7 +52,6 @@ namespace chronotext
         void drawInRect(const ci::Rectf &rect, float ox = 0, float oy = 0) const;
 
         uint32_t getId() const;
-        ci::gl::Texture* getTarget() const { return target.get(); } // XXX: TEMPORARY
 
         int getWidth() const;
         int getHeight() const;
@@ -66,7 +64,8 @@ namespace chronotext
         float getMaxU() const;
         float getMaxV() const;
         ci::Vec2f getMaxUV() const;
-        bool hasMipmap() const;
+        
+        size_t getMemoryUsage() const; // XXX: TEMPORARY, UNTIL A MORE RECENT VERSION OF new-chronotext-toolkit IS MERGED
         
     protected:
         ci::gl::TextureRef target;

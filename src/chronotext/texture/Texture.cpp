@@ -16,7 +16,6 @@ namespace chronotext
 {
     Texture::Texture(InputSource::Ref inputSource, bool useMipmap, TextureRequest::Flags flags)
     :
-    ResourceItem(inputSource),
     request(TextureRequest(inputSource, useMipmap, flags))
     {
         setTarget(TextureHelper::loadTexture(request));
@@ -24,7 +23,6 @@ namespace chronotext
     
     Texture::Texture(const TextureRequest &textureRequest)
     :
-    ResourceItem(textureRequest.inputSource),
     request(textureRequest)
     {
         setTarget(TextureHelper::loadTexture(request));
@@ -32,7 +30,6 @@ namespace chronotext
     
     Texture::Texture(const TextureData &textureData)
     :
-    ResourceItem(textureData.request.inputSource),
     request(textureData.request)
     {
         setTarget(TextureHelper::uploadTextureData(textureData));
@@ -198,6 +195,11 @@ namespace chronotext
         return Vec2f(maxU, maxV);
     }
     
+    size_t Texture::getMemoryUsage() const
+    {
+        return width * height * 4 * (request.useMipmap ? 1.33f : 1); // XXX: TEMPORARY
+    }
+
     void Texture::setTarget(ci::gl::TextureRef texture)
     {
         target = texture;
@@ -207,12 +209,5 @@ namespace chronotext
         height = texture->getHeight();
         maxU = texture->getMaxU();
         maxV = texture->getMaxV();
-        
-        memoryUsed = width * height * 4 * (request.useMipmap ? 1.33f : 1);
-    }
-
-    bool Texture::hasMipmap() const
-    {
-        return request.useMipmap;
     }
 }
