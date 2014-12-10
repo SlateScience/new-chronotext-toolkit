@@ -65,12 +65,12 @@ namespace chronotext
         setTarget(TextureHelper::uploadTextureData(textureData));
     }
     
-    void Texture::bind()
+    void Texture::bind() const
     {
         glBindTexture(GL_TEXTURE_2D, textureId);
     }
     
-    void Texture::begin()
+    void Texture::begin() const
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -79,19 +79,19 @@ namespace chronotext
         glBindTexture(GL_TEXTURE_2D, textureId);
     }
     
-    void Texture::end()
+    void Texture::end() const
     {
         glDisable(GL_TEXTURE_2D);
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
     
-    void Texture::drawFromCenter()
+    void Texture::drawFromCenter() const
     {
         draw(width * maxU * 0.5f, height * maxV * 0.5f);
     }
     
-    void Texture::draw(float rx, float ry)
+    void Texture::draw(float rx, float ry) const
     {
         float x1 = -rx;
         float y1 = -ry;
@@ -120,7 +120,7 @@ namespace chronotext
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
     
-    void Texture::drawInRect(const Rectf &rect, float ox, float oy)
+    void Texture::drawInRect(const Rectf &rect, float ox, float oy) const
     {
         const float vertices[] =
         {

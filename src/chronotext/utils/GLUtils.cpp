@@ -15,7 +15,102 @@ using namespace ci;
 
 namespace chronotext
 {
-    const Matrix44f getPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
+    void bindTexture(gl::Texture *texture)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture->getId());
+    }
+    
+    void beginTexture(gl::Texture *texture)
+    {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnable(GL_TEXTURE_2D);
+        
+        glBindTexture(GL_TEXTURE_2D, texture->getId());
+    }
+    
+    void endTexture()
+    {
+        glDisable(GL_TEXTURE_2D);
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+    
+    /*
+     * XXX: INCLUDES WORKAROUND FOR ci::gl::Texture::getCleanWidth() AND CO. WHICH ARE NOT WORKING ON GL-ES
+     */
+    void drawTextureFromCenter(gl::Texture *texture)
+    {
+        drawTexture(texture, texture->getWidth() * texture->getMaxU() * 0.5f, texture->getHeight() * texture->getMaxV() * 0.5f);
+    }
+    
+    /*
+     * XXX: INCLUDES WORKAROUND FOR ci::gl::Texture::getCleanWidth() AND CO. WHICH ARE NOT WORKING ON GL-ES
+     */
+    void drawTexture(gl::Texture *texture, float rx, float ry)
+    {
+        float u = texture->getMaxU();
+        float v = texture->getMaxV();
+        
+        float x1 = -rx;
+        float y1 = -ry;
+        
+        float x2 = x1 + texture->getWidth() * u;
+        float y2 = y1 + texture->getHeight() * v;
+        
+        const float vertices[] =
+        {
+            x1, y1,
+            x2, y1,
+            x2, y2,
+            x1, y2
+        };
+        
+        const float coords[] =
+        {
+            0, 0,
+            u, 0,
+            u, v,
+            0, v
+        };
+        
+        glTexCoordPointer(2, GL_FLOAT, 0, coords);
+        glVertexPointer(2, GL_FLOAT, 0, vertices);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    }
+    
+    /*
+     * XXX: ONLY WORKS FOR "TRUE" POWER-OF-TWO TEXTURES
+     */
+    void drawTextureInRect(gl::Texture *texture, const Rectf &rect, float ox, float oy)
+    {
+        const float vertices[] =
+        {
+            rect.x1, rect.y1,
+            rect.x2, rect.y1,
+            rect.x2, rect.y2,
+            rect.x1, rect.y2
+        };
+        
+        float u1 = (rect.x1 - ox) / texture->getWidth();
+        float v1 = (rect.y1 - oy) / texture->getHeight();
+        float u2 = (rect.x2 - ox) / texture->getWidth();
+        float v2 = (rect.y2 - oy) / texture->getHeight();
+        
+        const float coords[] =
+        {
+            u1, v1,
+            u2, v1,
+            u2, v2,
+            u1, v2
+        };
+        
+        glTexCoordPointer(2, GL_FLOAT, 0, coords);
+        glVertexPointer(2, GL_FLOAT, 0, vertices);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    }
+    
+    Matrix44f getPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
     {
         float ymax = zNear * math<float>::tan(fovy * PI / 360);
         float ymin = -ymax;
@@ -29,7 +124,7 @@ namespace chronotext
     /*
      * SPECIAL VERSION TAKING IN COUNT PAN AND ZOOM
      */
-    const Matrix44f getPerspectiveMatrix(float fovy, float zNear, float zFar, float width, float height, float panX, float panY, float zoom)
+    Matrix44f getPerspectiveMatrix(float fovy, float zNear, float zFar, float width, float height, float panX, float panY, float zoom)
     {
         float halfHeight = zNear * math<float>::tan(fovy * PI / 360) / zoom;
         float halfWidth = halfHeight * width / height;
@@ -43,7 +138,7 @@ namespace chronotext
     /*
      * BASED ON CODE FROM http://www.mesa3d.org
      */
-    const Matrix44f getFrustumMatrix(float left, float right, float bottom, float top, float znear, float zfar)
+    Matrix44f getFrustumMatrix(float left, float right, float bottom, float top, float znear, float zfar)
     {
         float x = (2 * znear) / (right - left);
         float y = (2 * znear) / (top - bottom);

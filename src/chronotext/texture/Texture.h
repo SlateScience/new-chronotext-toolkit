@@ -44,15 +44,16 @@ namespace chronotext
         TextureData fetchTextureData();
         void uploadTextureData(const TextureData &textureData);
         
-        void bind();
-        void begin();
-        void end();
+        void bind() const;
+        void begin() const;
+        void end() const;
         
-        void drawFromCenter();
-        void draw(float rx = 0, float ry = 0);
-        void drawInRect(const ci::Rectf &rect, float ox = 0, float oy = 0);
+        void drawFromCenter() const;
+        void draw(float rx = 0, float ry = 0) const;
+        void drawInRect(const ci::Rectf &rect, float ox = 0, float oy = 0) const;
 
         uint32_t getId() const;
+        ci::gl::Texture* getTarget() const { return target.get(); } // XXX: TEMPORARY
 
         int getWidth() const;
         int getHeight() const;
