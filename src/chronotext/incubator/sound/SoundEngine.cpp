@@ -70,7 +70,7 @@ void SoundEngine::update()
         {
             auto playingId = entry.first;
             auto channelId = entry.second.first;
-            auto effect = entry.second.second;
+            auto effectId = entry.second.second;
             
             FMOD::Channel *channel;
             system->getChannel(channelId, &channel);
@@ -80,7 +80,7 @@ void SoundEngine::update()
             
             if (!playing)
             {
-                completedEvents.emplace_back(EVENT_COMPLETED, effect, channelId, playingId);
+                completedEvents.emplace_back(createEvent(EVENT_COMPLETED, effectId, channelId, playingId));
             }
         }
         
@@ -147,11 +147,11 @@ const Effect* SoundEngine::getEffect(InputSource::Ref inputSource)
 
 int SoundEngine::playEffect(int effectId, int loopCount, float volume)
 {
-    for (auto &entry : playingEffects)
+    for (auto &entry : effects)
     {
-        if (entry.second.second->getId() == effectId)
+        if (entry.second->effectId == effectId)
         {
-            auto effect = entry.second.second;
+            auto effect = entry.second;
             
             FMOD::Channel *channel;
             system->playSound(FMOD_CHANNEL_FREE, effect->sound, true, &channel);
@@ -177,7 +177,7 @@ int SoundEngine::playEffect(int effectId, int loopCount, float volume)
             interruptChannel(channelId);
             
             int playingId = ++playCount;
-            playingEffects[playingId] = make_pair(channelId, effect);
+            playingEffects[playingId] = make_pair(channelId, effectId);
             
             dispatchEvent(Event(EVENT_STARTED, effect, channelId, playingId));
             return playingId;
@@ -225,15 +225,15 @@ bool SoundEngine::stopEffect(int playingId)
     
     if (entry != playingEffects.end())
     {
-        int channelId = entry->second.first;
-        Effect::Ref effect = entry->second.second;
+        auto channelId = entry->second.first;
+        auto effectId = entry->second.second;
         
         FMOD::Channel *channel;
         system->getChannel(channelId, &channel);
         channel->stop();
         
         playingEffects.erase(entry);
-        dispatchEvent(Event(EVENT_STOPPED, effect, channelId, playingId));
+        dispatchEvent(createEvent(EVENT_STOPPED, effectId, channelId, playingId));
         
         return true;
     }
@@ -247,7 +247,7 @@ bool SoundEngine::stopEffects(int effectId)
     
     for (auto &entry : playingEffects)
     {
-        if (entry.second.second->getId() == effectId)
+        if (entry.second.second == effectId)
         {
             playingIdsToStop.push_back(entry.first);
         }
@@ -356,11 +356,11 @@ bool SoundEngine::interruptChannel(int channelId)
     {
         if (entry.second.first == channelId)
         {
-            int playingId = entry.first;
-            Effect::Ref effect = entry.second.second;
+            auto playingId = entry.first;
+            auto effectId = entry.second.second;
 
             playingEffects.erase(playingId);
-            dispatchEvent(Event(EVENT_INTERRUPTED, effect, channelId, playingId));
+            dispatchEvent(createEvent(EVENT_INTERRUPTED, effectId, channelId, playingId));
             
             return true;
         }
@@ -369,10 +369,26 @@ bool SoundEngine::interruptChannel(int channelId)
     return false;
 }
 
+SoundEngine::Event SoundEngine::createEvent(Type type, int effectId, int channelId, int playingId)
+{
+    for (auto &entry : effects)
+    {
+        if (entry.second->effectId == effectId)
+        {
+            return Event(type, entry.second, channelId, playingId);
+        }
+    }
+    
+    return Event();
+}
+
 void SoundEngine::dispatchEvent(const Event &event)
 {
-    for (auto listener : listeners)
+    if (event.type != EVENT_UNDEFINED)
     {
-        listener->handleEvent(event);
+        for (auto &listener : listeners)
+        {
+            listener->handleEvent(event);
+        }
     }
 }
