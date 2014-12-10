@@ -120,6 +120,11 @@ public:
     Effect::Ref preloadEffect(chr::InputSource::Ref inputSource); // CAN THROW
     bool unloadEffect(chr::InputSource::Ref inputSource);
     
+    /*
+     * THE RETURNED POINTER IS NOT INTENDED FOR STORAGE
+     *
+     * TODO: SWITCH TO shared_ptr (OR weak_ptr) ONCE "GLOBAL" (E.G. REFERENCE-COUNTED) UNLOADING IS IMPLEMENTED
+     */
     const Effect* getEffect(chr::InputSource::Ref inputSource);
     
     int playEffect(int effectId, int loopCount = 0, float volume = 1);
@@ -137,14 +142,16 @@ public:
     
 protected:
     std::map<std::string, Effect::Ref> effects;
-    std::map<int, std::pair<int, Effect::Ref>> playingEffects;
+    std::map<int, std::pair<int, int>> playingEffects;
     
     int playCount;
     int effectCount;
     
     std::set<Listener*> listeners;
     
-    Effect* loadEffect(chr::InputSource::Ref inputSource);
+    Effect* loadEffect(chr::InputSource::Ref inputSource); // CAN THROW
     bool interruptChannel(int channelId);
+    
+    Event createEvent(Type type, int effectId, int channelId, int playingId);
     void dispatchEvent(const Event &event);
 };
