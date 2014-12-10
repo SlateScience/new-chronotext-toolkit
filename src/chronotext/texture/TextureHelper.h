@@ -24,9 +24,10 @@ namespace chronotext
         
     protected:
         static void textureDeallocator(void *refcon);
+        static bool isOverSized(const TextureRequest &textureRequest, const ci::Vec2i &size);
+        
         static TextureData fetchTranslucentTextureData(const TextureRequest &textureRequest);
         static TextureData fetchPowerOfTwoTextureData(const TextureRequest &textureRequest);
-        static TextureData fetchCroppablePowerOfTwoTextureData(const TextureRequest &textureRequest);
     };
 }
 
