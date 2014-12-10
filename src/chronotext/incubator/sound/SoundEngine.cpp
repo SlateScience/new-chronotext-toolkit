@@ -2,7 +2,7 @@
  * THE NEW CHRONOTEXT TOOLKIT: https://github.com/arielm/new-chronotext-toolkit
  * COPYRIGHT (C) 2012-2014, ARIEL MALKA ALL RIGHTS RESERVED.
  *
- * THE FOLLOWING SOURCE-CODE IS DISTRIBUTED UNDER THE MODIFIED BSD LICENSE:
+ * THE FOLLOWING SOURCE-CODE IS DISTRIBUTED UNDER THE SIMPLIFIED BSD LICENSE:
  * https://github.com/arielm/new-chronotext-toolkit/blob/master/LICENSE.md
  */
 
@@ -15,156 +15,117 @@ using namespace chr;
 
 SoundEngine::SoundEngine()
 :
+system(nullptr),
 playCount(0),
-listener(nullptr)
+effectCount(0)
 {}
 
 void SoundEngine::setup(int maxChannels)
 {
-    FMOD::System_Create(&system);
-    system->init(maxChannels, FMOD_INIT_NORMAL, NULL);
-    system->getMasterChannelGroup(&masterGroup);
+    if (!system)
+    {
+        FMOD::System_Create(&system);
+        system->init(maxChannels, FMOD_INIT_NORMAL, nullptr);
+        system->getMasterChannelGroup(&masterGroup);
+    }
 }
 
 void SoundEngine::shutdown()
 {
-    system->close();
-    system->release();
-}
-
-void SoundEngine::setListener(Listener *listener)
-{
-    this->listener = listener;
+    if (system)
+    {
+        system->close();
+        system->release();
+        system = nullptr;
+    }
 }
 
 void SoundEngine::pause()
 {
-    masterGroup->setPaused(true);
+    if (system)
+    {
+        masterGroup->setPaused(true);
+    }
 }
 
 void SoundEngine::resume()
 {
-    masterGroup->setPaused(false);
+    if (system)
+    {
+        masterGroup->setPaused(false);
+    }
 }
 
 void SoundEngine::update()
 {
-    system->update();
-    
-    // ---
-    
-    vector<Event> completedEvents;
-    
-    for (auto &it : playingEffects)
+    if (system)
     {
-        int playingId = it.first;
-        int channelId = it.second.first;
-        EffectRef effect = it.second.second;
+        system->update();
         
-        FMOD::Channel *channel;
-        system->getChannel(channelId, &channel);
+        // ---
         
-        bool playing;
-        channel->isPlaying(&playing);
+        vector<Event> completedEvents;
         
-        if (!playing)
+        for (auto &entry : playingEffects)
         {
-            completedEvents.push_back(Event(EVENT_COMPLETED, effect, channelId, playingId));
+            auto playingId = entry.first;
+            auto channelId = entry.second.first;
+            auto effect = entry.second.second;
+            
+            FMOD::Channel *channel;
+            system->getChannel(channelId, &channel);
+            
+            bool playing;
+            channel->isPlaying(&playing);
+            
+            if (!playing)
+            {
+                completedEvents.emplace_back(EVENT_COMPLETED, effect, channelId, playingId);
+            }
         }
-    }
-    
-    for (auto event : completedEvents)
-    {
-        playingEffects.erase(event.playingId);
-        processEvent(event);
+        
+        for (auto &event : completedEvents)
+        {
+            playingEffects.erase(event.playingId);
+            dispatchEvent(event);
+        }
     }
 }
 
-EffectRef SoundEngine::preloadEffect(InputSourceRef inputSource)
+void SoundEngine::addListener(Listener *listener)
 {
-    string key = inputSource->getURI();
-    auto it = effects.find(key);
+    listeners.insert(listener);
+}
+
+void SoundEngine::removeListener(Listener *listener)
+{
+    listeners.erase(listener);
+}
+
+Effect::Ref SoundEngine::preloadEffect(InputSource::Ref inputSource)
+{
+    auto entry = effects.find(inputSource->getURI());
     
-    if (it == effects.end())
+    if (entry == effects.end())
     {
-        EffectRef effect = loadEffect(inputSource);
-        effects[key] = effect;
+        auto effect = Effect::Ref(loadEffect(inputSource));
+        effects[inputSource->getURI()] = effect;
         return effect;
     }
     else
     {
-        return it->second;
+        return entry->second;
     }
 }
 
-void SoundEngine::unloadEffect(EffectRef effect)
+bool SoundEngine::unloadEffect(InputSource::Ref inputSource)
 {
-    stopEffects(effect);
+    auto entry = effects.find(inputSource->getURI());
     
-    // ---
-    
-    auto it = effects.find(effect->inputSource->getURI());
-    
-    if (it != effects.end())
+    if (entry != effects.end())
     {
-        effects.erase(it);
-    }
-}
-
-int SoundEngine::playEffect(EffectRef effect, int loopCount, float volume)
-{
-    if (effect)
-    {
-        FMOD::Channel *channel;
-        system->playSound(FMOD_CHANNEL_FREE, effect->sound, true, &channel);
-        
-        if (loopCount)
-        {
-            channel->setLoopCount(loopCount);
-            channel->setMode(FMOD_LOOP_NORMAL);
-        }
-        else
-        {
-            channel->setMode(FMOD_LOOP_OFF);
-        }
-
-        channel->setVolume(volume);
-        channel->setPaused(false);
-        
-        // ---
-        
-        int channelId;
-        channel->getIndex(&channelId);
-        
-        interruptChannel(channelId);
-        
-        int playingId = nextPlayingId(effect);
-        playingEffects[playingId] = make_pair(channelId, effect);
-        
-        processEvent(Event(EVENT_STARTED, effect, channelId, playingId));
-        return playingId;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-bool SoundEngine::stopEffect(int playingId)
-{
-    auto it = playingEffects.find(playingId);
-    
-    if (it != playingEffects.end())
-    {
-        int channelId = it->second.first;
-        EffectRef effect = it->second.second;
-        
-        FMOD::Channel *channel;
-        system->getChannel(channelId, &channel);
-        channel->stop();
-        
-        playingEffects.erase(it);
-        processEvent(Event(EVENT_STOPPED, effect, channelId, playingId));
+        stopEffects(entry->second->getId());
+        effects.erase(entry);
         
         return true;
     }
@@ -172,15 +133,123 @@ bool SoundEngine::stopEffect(int playingId)
     return false;
 }
 
-bool SoundEngine::stopEffects(EffectRef effect)
+const Effect* SoundEngine::getEffect(InputSource::Ref inputSource)
+{
+    auto entry = effects.find(inputSource->getURI());
+    
+    if (entry != effects.end())
+    {
+        return entry->second.get();
+    }
+    
+    return nullptr;
+}
+
+int SoundEngine::playEffect(int effectId, int loopCount, float volume)
+{
+    for (auto &entry : playingEffects)
+    {
+        if (entry.second.second->getId() == effectId)
+        {
+            auto effect = entry.second.second;
+            
+            FMOD::Channel *channel;
+            system->playSound(FMOD_CHANNEL_FREE, effect->sound, true, &channel);
+            
+            if (loopCount)
+            {
+                channel->setLoopCount(loopCount);
+                channel->setMode(FMOD_LOOP_NORMAL);
+            }
+            else
+            {
+                channel->setMode(FMOD_LOOP_OFF);
+            }
+            
+            channel->setVolume(volume);
+            channel->setPaused(false);
+            
+            // ---
+            
+            int channelId;
+            channel->getIndex(&channelId);
+            
+            interruptChannel(channelId);
+            
+            int playingId = ++playCount;
+            playingEffects[playingId] = make_pair(channelId, effect);
+            
+            dispatchEvent(Event(EVENT_STARTED, effect, channelId, playingId));
+            return playingId;
+        }
+    }
+    
+    return 0;
+}
+
+bool SoundEngine::pauseEffect(int playingId)
+{
+    auto entry = playingEffects.find(playingId);
+    
+    if (entry != playingEffects.end())
+    {
+        FMOD::Channel *channel;
+        system->getChannel(entry->second.first, &channel);
+        channel->setPaused(true);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+bool SoundEngine::resumeEffect(int playingId)
+{
+    auto entry = playingEffects.find(playingId);
+    
+    if (entry != playingEffects.end())
+    {
+        FMOD::Channel *channel;
+        system->getChannel(entry->second.first, &channel);
+        channel->setPaused(false);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+bool SoundEngine::stopEffect(int playingId)
+{
+    auto entry = playingEffects.find(playingId);
+    
+    if (entry != playingEffects.end())
+    {
+        int channelId = entry->second.first;
+        Effect::Ref effect = entry->second.second;
+        
+        FMOD::Channel *channel;
+        system->getChannel(channelId, &channel);
+        channel->stop();
+        
+        playingEffects.erase(entry);
+        dispatchEvent(Event(EVENT_STOPPED, effect, channelId, playingId));
+        
+        return true;
+    }
+    
+    return false;
+}
+
+bool SoundEngine::stopEffects(int effectId)
 {
     vector<int> playingIdsToStop;
     
-    for (auto &it : playingEffects)
+    for (auto &entry : playingEffects)
     {
-        if (it.second.second == effect)
+        if (entry.second.second->getId() == effectId)
         {
-            playingIdsToStop.push_back(it.first);
+            playingIdsToStop.push_back(entry.first);
         }
     }
     
@@ -196,12 +265,12 @@ bool SoundEngine::stopAllEffects()
 {
     vector<int> playingIdsToStop;
     
-    for (auto &it : playingEffects)
+    for (auto &entry : playingEffects)
     {
-        playingIdsToStop.push_back(it.first);
+        playingIdsToStop.push_back(entry.first);
     }
     
-    for (auto playingId : playingIdsToStop)
+    for (auto &playingId : playingIdsToStop)
     {
         stopEffect(playingId);
     }
@@ -211,61 +280,87 @@ bool SoundEngine::stopAllEffects()
 
 void SoundEngine::setMute(bool mute)
 {
-    masterGroup->setMute(mute);
+    if (system)
+    {
+        masterGroup->setMute(mute);
+    }
+}
+
+bool SoundEngine::isMute()
+{
+    bool mute = false;
+    
+    if (system)
+    {
+        masterGroup->getMute(&mute);
+    }
+    
+    return mute;
+}
+
+float SoundEngine::getVolume()
+{
+    float volume = 0;
+    
+    if (system)
+    {
+        masterGroup->getVolume(&volume);
+    }
+    
+    return volume;
 }
 
 void SoundEngine::setVolume(float volume)
 {
-    masterGroup->setVolume(volume);
+    if (system)
+    {
+        masterGroup->setVolume(volume);
+    }
 }
 
-EffectRef SoundEngine::loadEffect(InputSourceRef inputSource)
+Effect* SoundEngine::loadEffect(InputSource::Ref inputSource)
 {
-    FMOD_RESULT result = FMOD_OK;
-    FMOD::Sound *sound = NULL;
+    FMOD_RESULT result = FMOD_ERR_UNINITIALIZED;
+    FMOD::Sound *sound = nullptr;
     
-    if (inputSource->isFile())
+    if (system)
     {
-        result = system->createSound(inputSource->getFilePath().c_str(), FMOD_DEFAULT, NULL, &sound);
-    }
-    else
-    {
-        Buffer buffer = inputSource->loadDataSource()->getBuffer();
-        
-        FMOD_CREATESOUNDEXINFO exinfo;
-        memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
-        exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-        exinfo.length = buffer.getDataSize();
-        
-        result = system->createSound(static_cast<const char*>(buffer.getData()), FMOD_DEFAULT | FMOD_OPENMEMORY, &exinfo, &sound);
+        if (inputSource->isFile())
+        {
+            result = system->createSound(inputSource->getFilePath().c_str(), FMOD_DEFAULT, nullptr, &sound);
+        }
+        else
+        {
+            auto buffer = inputSource->loadDataSource()->getBuffer();
+            
+            FMOD_CREATESOUNDEXINFO exinfo;
+            memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
+            exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+            exinfo.length = buffer.getDataSize();
+            
+            result = system->createSound(static_cast<const char*>(buffer.getData()), FMOD_DEFAULT | FMOD_OPENMEMORY, &exinfo, &sound);
+        }
     }
     
     if (result)
     {
         throw FMODException(result);
     }
-    else
-    {
-        return make_shared<Effect>(inputSource, sound);
-    }
-}
-
-int SoundEngine::nextPlayingId(EffectRef effect)
-{
-    return ++playCount;
+    
+    return new Effect(inputSource, ++effectCount, sound);
 }
 
 bool SoundEngine::interruptChannel(int channelId)
 {
-    for (auto &it : playingEffects)
+    for (auto &entry : playingEffects)
     {
-        if (it.second.first == channelId)
+        if (entry.second.first == channelId)
         {
-            int playingId = it.first;
-            EffectRef effect = it.second.second;
+            int playingId = entry.first;
+            Effect::Ref effect = entry.second.second;
 
             playingEffects.erase(playingId);
-            processEvent(Event(EVENT_INTERRUPTED, effect, channelId, playingId));
+            dispatchEvent(Event(EVENT_INTERRUPTED, effect, channelId, playingId));
             
             return true;
         }
@@ -274,9 +369,9 @@ bool SoundEngine::interruptChannel(int channelId)
     return false;
 }
 
-void SoundEngine::processEvent(const Event &event)
+void SoundEngine::dispatchEvent(const Event &event)
 {
-    if (listener)
+    for (auto listener : listeners)
     {
         listener->handleEvent(event);
     }

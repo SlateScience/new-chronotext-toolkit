@@ -2,20 +2,21 @@
  * THE NEW CHRONOTEXT TOOLKIT: https://github.com/arielm/new-chronotext-toolkit
  * COPYRIGHT (C) 2012-2014, ARIEL MALKA ALL RIGHTS RESERVED.
  *
- * THE FOLLOWING SOURCE-CODE IS DISTRIBUTED UNDER THE MODIFIED BSD LICENSE:
+ * THE FOLLOWING SOURCE-CODE IS DISTRIBUTED UNDER THE SIMPLIFIED BSD LICENSE:
  * https://github.com/arielm/new-chronotext-toolkit/blob/master/LICENSE.md
  */
 
 #pragma once
 
-#include "chronotext/incubator/sound/Effect.h"
+#include "Effect.h"
 
 #include <map>
+#include <set>
 
 class SoundEngine
 {
 public:
-    enum
+    enum Type
     {
         EVENT_UNDEFINED,
         EVENT_STARTED,
@@ -23,11 +24,11 @@ public:
         EVENT_INTERRUPTED, // EFFECT AUTOMATICALLY STOPPED IN FAVOR OF A NEW EFFECT (I.E. WHEN NO FREE CHANNEL REMAIN)
         EVENT_COMPLETED
     };
-    
+
     struct Event
     {
-        int type;
-        EffectRef effect;
+        Type type;
+        Effect::Ref effect;
         int channelId;
         int playingId;
         
@@ -38,7 +39,7 @@ public:
         playingId(0)
         {}
         
-        Event(int type, EffectRef effect, int channelId, int playingId)
+        Event(Type type, Effect::Ref effect, int channelId, int playingId)
         :
         type(type),
         effect(effect),
@@ -62,7 +63,7 @@ public:
                 case EVENT_COMPLETED:
                     return "COMPLETED";
                     
-                default:
+                case EVENT_UNDEFINED:
                     return "";
             }
         }
@@ -82,43 +83,68 @@ public:
     class Listener
     {
     public:
+        virtual ~Listener() {}
         virtual void handleEvent(const Event &event) = 0;
     };
   
+    // ---
+    
+    FMOD::System *system;
+    FMOD::ChannelGroup *masterGroup;
+
     SoundEngine();
     
     void setup(int maxChannels = 32);
     void shutdown();
-            
-    void setListener(Listener *listener);
     
+    /*
+     * FIXME: UNSAFE
+     */
+    void addListener(Listener *listener);
+    void removeListener(Listener *listener);
+    
+    /*
+     * ON ANDROID (UNLIKE iOS):
+     * IT IS NECESSARY TO CALL THESE UPON FOREGROUND/BACKGROUND SWITCHES
+     */
     void pause();
     void resume();
+    
+    /*
+     * IT IS MANDATORY TO CALL UPDATE EACH FRAME,
+     * OTHERWISE (AND AMONG OTHER THINGS):
+     * CHANNELS WON'T BE FREED UPON COMPLETION
+     */
     void update();
     
-    EffectRef preloadEffect(chr::InputSourceRef inputSource);
-    void unloadEffect(EffectRef effect);
+    Effect::Ref preloadEffect(chr::InputSource::Ref inputSource); // CAN THROW
+    bool unloadEffect(chr::InputSource::Ref inputSource);
     
-    int playEffect(EffectRef effect, int loopCount = 0, float volume = 1);
+    const Effect* getEffect(chr::InputSource::Ref inputSource);
+    
+    int playEffect(int effectId, int loopCount = 0, float volume = 1);
+    bool pauseEffect(int playingId);
+    bool resumeEffect(int playingId);
     bool stopEffect(int playingId);
-    bool stopEffects(EffectRef effect);
+    bool stopEffects(int effectId);
     bool stopAllEffects();
 
+    bool isMute();
     void setMute(bool mute);
+
+    float getVolume();
     void setVolume(float volume);
     
 protected:
-    FMOD::System *system;
-    FMOD::ChannelGroup *masterGroup;
-    
-    std::map<std::string, EffectRef> effects;
-    std::map<int, std::pair<int, EffectRef>> playingEffects;
+    std::map<std::string, Effect::Ref> effects;
+    std::map<int, std::pair<int, Effect::Ref>> playingEffects;
     
     int playCount;
-    Listener *listener;
+    int effectCount;
     
-    EffectRef loadEffect(chr::InputSourceRef inputSource);
-    int nextPlayingId(EffectRef effect);
+    std::set<Listener*> listeners;
+    
+    Effect* loadEffect(chr::InputSource::Ref inputSource);
     bool interruptChannel(int channelId);
-    void processEvent(const Event &event);
+    void dispatchEvent(const Event &event);
 };
