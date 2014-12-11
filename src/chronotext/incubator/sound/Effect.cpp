@@ -45,7 +45,7 @@ uint32_t Effect::getId() const
     return effectId;
 }
 
-double Effect::getDuration() const
+double Effect::getDuration()
 {
     if (sound)
     {
@@ -58,7 +58,7 @@ double Effect::getDuration() const
     return 0;
 }
 
-size_t Effect::getMemoryUsage() const
+size_t Effect::getMemoryUsage()
 {
     if (sound)
     {

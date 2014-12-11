@@ -19,14 +19,19 @@ namespace chronotext
     {
         glBindTexture(GL_TEXTURE_2D, texture->getId());
     }
-    
+
+    void unbindTexture()
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
     void beginTexture(gl::Texture *texture)
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnable(GL_TEXTURE_2D);
         
-        glBindTexture(GL_TEXTURE_2D, texture->getId());
+        bindTexture(texture);
     }
     
     void endTexture()

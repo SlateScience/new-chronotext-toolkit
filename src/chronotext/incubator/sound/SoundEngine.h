@@ -122,10 +122,8 @@ public:
     
     /*
      * THE RETURNED POINTER IS NOT INTENDED FOR STORAGE
-     *
-     * TODO: SWITCH TO shared_ptr (OR weak_ptr) ONCE "GLOBAL" (E.G. REFERENCE-COUNTED) UNLOADING IS IMPLEMENTED
      */
-    const Effect* getEffect(chr::InputSource::Ref inputSource);
+    Effect* getEffect(chr::InputSource::Ref inputSource);
     
     int playEffect(int effectId, int loopCount = 0, float volume = 1);
     bool pauseEffect(int playingId);

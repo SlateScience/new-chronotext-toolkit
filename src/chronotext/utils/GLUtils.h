@@ -15,6 +15,8 @@
 namespace chronotext
 {
     void bindTexture(ci::gl::Texture *texture);
+    void unbindTexture();
+    
     void beginTexture(ci::gl::Texture *texture);
     void endTexture();
     

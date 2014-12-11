@@ -12,11 +12,11 @@
 
 namespace chronotext
 {
-    typedef std::shared_ptr<class Texture> TextureRef;
-    
     class Texture
     {
     public:
+        typedef std::shared_ptr<Texture> Ref;
+
         class Exception : public std::exception
         {
             std::string message;
@@ -32,25 +32,20 @@ namespace chronotext
         };
         
         TextureRequest request;
-        
+
         Texture(InputSource::Ref inputSource, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
         Texture(const TextureRequest &textureRequest);
         Texture(const TextureData &textureData);
-        
+
+        Texture();
+        ~Texture();
+
         void discard();
         void reload();
         
         TextureData fetchTextureData();
         void uploadTextureData(const TextureData &textureData);
         
-        void bind() const;
-        void begin() const;
-        void end() const;
-        
-        void drawFromCenter() const;
-        void draw(float rx = 0, float ry = 0) const;
-        void drawInRect(const ci::Rectf &rect, float ox = 0, float oy = 0) const;
-
         uint32_t getId() const;
 
         int getWidth() const;
@@ -67,6 +62,16 @@ namespace chronotext
         
         size_t getMemoryUsage() const; // XXX: TEMPORARY, UNTIL A MORE RECENT VERSION OF new-chronotext-toolkit IS MERGED
         
+        void bind(bool forceload = true);
+        void unbind();
+        
+        void begin(bool forceload = true);
+        void end();
+        
+        void drawFromCenter();
+        void draw(float rx = 0, float ry = 0);
+        void drawInRect(const ci::Rectf &rect, float ox = 0, float oy = 0);
+        
     protected:
         ci::gl::TextureRef target;
         
@@ -77,6 +82,7 @@ namespace chronotext
         float maxV;
         
         void setTarget(ci::gl::TextureRef texture);
+        void resetTarget();
     };
 }
 

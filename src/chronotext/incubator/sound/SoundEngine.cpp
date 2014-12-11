@@ -133,7 +133,7 @@ bool SoundEngine::unloadEffect(InputSource::Ref inputSource)
     return false;
 }
 
-const Effect* SoundEngine::getEffect(InputSource::Ref inputSource)
+Effect* SoundEngine::getEffect(InputSource::Ref inputSource)
 {
     auto entry = effects.find(inputSource->getURI());
     

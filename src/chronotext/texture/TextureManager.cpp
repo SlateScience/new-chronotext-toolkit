@@ -13,41 +13,47 @@ using namespace ci;
 
 namespace chronotext
 {
-    TextureRef TextureManager::getTexture(const string &resourceName, bool useMipmap, TextureRequest::Flags flags)
+    Texture::Ref TextureManager::getTexture(const string &resourceName, bool useMipmap, TextureRequest::Flags flags)
     {
         return getTexture(InputSource::getResource(resourceName), useMipmap, flags);
     }
     
-    TextureRef TextureManager::getTexture(InputSource::Ref inputSource, bool useMipmap, TextureRequest::Flags flags)
+    Texture::Ref TextureManager::getTexture(InputSource::Ref inputSource, bool useMipmap, TextureRequest::Flags flags)
     {
         return getTexture(TextureRequest(inputSource, useMipmap, flags));
     }
     
-    TextureRef TextureManager::getTexture(const TextureRequest &textureRequest)
+    Texture::Ref TextureManager::getTexture(const TextureRequest &textureRequest, bool forceLoad)
     {
         auto it = textures.find(textureRequest);
         
         if (it != textures.end())
         {
+            if (forceLoad)
+            {
+                it->second->reload();
+            }
+            
             return it->second;
         }
-        else
+        else if (forceLoad)
         {
             auto texture = make_shared<Texture>(textureRequest);
             textures[textureRequest] = texture;
             return texture;
         }
+        
+        return Texture::Ref();
     }
     
-    bool TextureManager::remove(TextureRef texture)
+    bool TextureManager::remove(const TextureRequest &textureRequest)
     {
-        for (auto it = textures.begin(); it != textures.end(); ++it)
+        auto it = textures.find(textureRequest);
+        
+        if (it != textures.end())
         {
-            if (it->second == texture)
-            {
-                textures.erase(it);
-                return true;
-            }
+            textures.erase(it);
+            return true;
         }
         
         return false;
@@ -60,17 +66,17 @@ namespace chronotext
     
     void TextureManager::discard()
     {
-        for (auto &it : textures)
+        for (auto &entry : textures)
         {
-            it.second->discard();
+            entry.second->discard();
         }
     }
     
     void TextureManager::reload()
     {
-        for (auto &it : textures)
+        for (auto &entry : textures)
         {
-            it.second->reload();
+            entry.second->reload();
         }
     }
 }

@@ -28,6 +28,6 @@ public:
     
     uint32_t getId() const;
     
-    double getDuration() const;
-    size_t getMemoryUsage() const;
+    double getDuration();
+    size_t getMemoryUsage();
 };

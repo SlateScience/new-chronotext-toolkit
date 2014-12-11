@@ -38,9 +38,14 @@ namespace chronotext
         {
             throw Texture::Exception("TEXTURE IS UNDEFINED");
         }
-        else if (isOverSized(textureRequest, textureData.getSize()))
+        else
         {
-            throw Texture::Exception(string("TEXTURE IS OVER-SIZED: ") + ci::toString(textureData.width) + "x" + ci::toString(textureData.height));
+            const Vec2i size = textureData.getSize();
+            
+            if (isOverSized(textureRequest, size))
+            {
+                throw Texture::Exception("TEXTURE IS OVER-SIZED (" + toString(size.x) + "x" + toString(size.y) + ")");
+            }
         }
         
         return uploadTextureData(textureData);

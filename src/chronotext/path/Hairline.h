@@ -26,7 +26,7 @@ namespace chronotext
     protected:
         Type type;
         
-        TextureRef texture;
+        Texture::Ref texture;
         TexturedTriangleStrip strip;
     };
 }
