@@ -16,14 +16,17 @@
 
 #include <map>
 #include <set>
+#include <queue>
 
 #include <boost/asio.hpp>
 
 namespace chronotext
 {
-    class TaskManager
+    class TaskManager : public std::enable_shared_from_this<TaskManager>
     {
     public:
+        static int MAX_CONCURRENT_THREADS;
+
         TaskManager(boost::asio::io_service &io);
         
         /*
@@ -79,19 +82,22 @@ namespace chronotext
         bool cancelTask(int taskId);
         
     protected:
-        std::thread::id threadId;
         boost::asio::io_service &io;
-        
+
+        std::thread::id threadId;
         int taskCount;
         
         std::map<int, std::shared_ptr<Task>> tasks;
         std::set<int> startedTasks;
+        std::set<int> postponedTasks;
+        std::queue<int> taskQueue;
         
         bool isThreadSafe();
         
     private:
         friend class Task;
         
+        TaskManager();
         TaskManager(const TaskManager &other) = delete;
         
         /*
@@ -108,7 +114,6 @@ namespace chronotext
         bool post(std::function<void()> &&fn, bool forceSync = false);
         
         void endTask(int taskId);
+        void nextTask();
     };
 }
-
-namespace chr = chronotext;

@@ -11,13 +11,24 @@
 #include "chronotext/os/TaskManager.h"
 #include "chronotext/utils/Utils.h"
 
+#include <chrono>
+
 using namespace std;
 using namespace ci;
 
 namespace chronotext
 {
-    const bool Task::VERBOSE = true;
+    bool Task::VERBOSE = true;
     
+    void Task::sleep(double seconds)
+    {
+#if defined(CINDER_ANDROID)
+        boost::this_thread::sleep_for(boost::chrono::duration<double, boost::chrono::seconds::period>(seconds)); // XXX: A CURRENT LIMITATION OF SAFETY-DANK'S ANDROID PORT
+#else
+        this_thread::sleep_for(chrono::duration<double, chrono::seconds::period>(seconds));
+#endif
+    }
+
     Task::State::State()
     :
     initialized(false),
@@ -28,9 +39,9 @@ namespace chronotext
     
     Task::~Task()
     {
-        LOGD_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
+        LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
         
-        detach(); // OTHERWISE: OSX APPLICATION MAY CRASH, E.G. WHEN SHUT-DOWN VIA WINDOW-CLOSE-BUTTON
+        detach(); // OTHERWISE: THE APPLICATION MAY CRASH WHEN ABRUPTLY SHUT-DOWN
     }
     
     int Task::getId() const
@@ -40,31 +51,26 @@ namespace chronotext
     
     bool Task::hasStarted()
     {
-        boost::mutex::scoped_lock lock(_mutex);
+        lock_guard<mutex> lock(_mutex);
         return state.started;
     }
     
     bool Task::hasEnded()
     {
-        boost::mutex::scoped_lock lock(_mutex);
+        lock_guard<mutex> lock(_mutex);
         return state.ended;
     }
     
     bool Task::isCancelRequired()
     {
-        boost::mutex::scoped_lock lock(_mutex);
+        lock_guard<mutex> lock(_mutex);
         return state.cancelRequired;
-    }
-    
-    void Task::sleep(float milliseconds)
-    {
-        ci::sleep(milliseconds);
     }
     
     // ---
     
     /*
-     * ASSERTION: INVOKED ON THE TASK'S THREAD
+     * ASSERTION: INVOKED ON THE TASK-THREAD
      */
     
     bool Task::post(function<void()> &&fn)
@@ -82,7 +88,7 @@ namespace chronotext
     {
         if (!state.started)
         {
-            LOGD_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
+            LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
             
             synchronous = forceSync;
             
@@ -112,9 +118,9 @@ namespace chronotext
     {
         if (!synchronous && state.started)
         {
-            LOGD_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
+            LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
             
-            boost::mutex::scoped_lock lock(_mutex);
+            lock_guard<mutex> lock(_mutex);
             state.cancelRequired = true;
         }
         else
@@ -148,7 +154,7 @@ namespace chronotext
         {
             if (init())
             {
-                LOGD_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
+                LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
                 
                 Task::manager = manager;
                 Task::taskId = taskId;
@@ -162,14 +168,14 @@ namespace chronotext
     }
     
     /*
-     * ASSERTION: INVOKED ON THE TASK'S THREAD
+     * ASSERTION: INVOKED ON THE TASK-THREAD
      */
     
     void Task::performRun()
     {
         if (state.started && !state.ended)
         {
-            LOGD_IF(VERBOSE) << __PRETTY_FUNCTION__ << " [BEGIN] | " << taskId << " | " << this << endl;
+            LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " [BEGIN] | " << taskId << " | " << this << endl;
             
             if (!isCancelRequired())
             {
@@ -186,18 +192,16 @@ namespace chronotext
             state.ended = true;
             
             /*
-             * NECESSARY IN ORDER TO WAIT FOR THE LAMBDAS WHICH
-             * MAY HAVE BEEN POSTED BY DURING Task::run()
+             * IT IS NECESSARY TO WAIT FOR THE LAMBDAS WHICH MAY HAVE BEEN POSTED BY DURING Task::run()
              */
             manager->post([=]{ manager->endTask(taskId); });
             
-            LOGD_IF(VERBOSE) << __PRETTY_FUNCTION__ << " [END] | " << taskId << " | " << this << endl;
+            LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " [END] | " << taskId << " | " << this << endl;
             
             /*
              * TODO:
              *
-             * INVESTIGATE IN WHICH "STATE" IS THE THREAD
-             * UNTIL Task::performShutdown() IS INVOKED
+             * INVESTIGATE IN WHICH "STATE" IS THE THREAD UNTIL Task::performShutdown() IS INVOKED
              *
              * SHOULD WE BE IN A "WAIT STATE" UNTIL THEN?
              */
@@ -219,7 +223,7 @@ namespace chronotext
     {
         if (!state.started || state.ended)
         {
-            LOGD_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
+            LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
             
             shutdown();
             

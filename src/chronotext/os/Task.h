@@ -14,8 +14,6 @@
 
 #include "cinder/Thread.h"
 
-#include <boost/thread/mutex.hpp>
-
 namespace chronotext
 {
     class TaskManager;
@@ -23,7 +21,7 @@ namespace chronotext
     class Task
     {
     public:
-        static const bool VERBOSE;
+        static bool VERBOSE;
         
         struct State
         {
@@ -45,7 +43,7 @@ namespace chronotext
         bool hasEnded();
         bool isCancelRequired();
         
-        void sleep(float milliseconds);
+        static void sleep(double seconds);
         
     protected:
         State state;
@@ -55,7 +53,7 @@ namespace chronotext
         bool synchronous;
         
         std::thread _thread;
-        boost::mutex _mutex;
+        std::mutex _mutex;
         
         virtual ~Task();
         
