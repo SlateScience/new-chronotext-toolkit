@@ -22,7 +22,8 @@ namespace chronotext
     :
     CinderSketchBase(),
     context(static_cast<AppNative*>(context)),
-    delegate(static_cast<CinderApp*>(delegate))
+    delegate(static_cast<CinderApp*>(delegate)),
+    mClock(FrameClock::create())
     {
         // put here code that would detect the monitor's DPI, if possible
         mDensity = DEFAULT_DESKTOP_DENSITY;

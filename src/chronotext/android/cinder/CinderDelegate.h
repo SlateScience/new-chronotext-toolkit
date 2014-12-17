@@ -39,6 +39,9 @@ namespace chronotext
         std::shared_ptr<boost::asio::io_service> io;
         std::shared_ptr<boost::asio::io_service::work> ioWork;
         
+        void start(int flags);
+        void stop(int flags);
+        
         static int sensorEventCallback(int fd, int events, void *data)
         {
             CinderDelegate *instance = (CinderDelegate*)data;

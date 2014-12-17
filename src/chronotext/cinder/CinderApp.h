@@ -45,11 +45,6 @@ namespace chronotext
         virtual void receiveMessageFromSketch(int what, const std::string &body) {}
         void sendMessageToSketch(int what, const std::string &body);
         
-#if defined(CINDER_ANDROID)
-        void pause();
-        void resume(bool renewContext);
-#endif
-        
     protected:
         int startCount;
         int updateCount;
@@ -58,8 +53,8 @@ namespace chronotext
         double t0;
         double elapsed;
         
-        void start();
-        void stop();
+        void start(int flags);
+        void stop(int flags);
     };
 }
 

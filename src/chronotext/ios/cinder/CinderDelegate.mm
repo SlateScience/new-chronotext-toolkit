@@ -64,6 +64,8 @@ using namespace chr;
     frameCount = 0;
     timer.start();
     
+    sketch->clock().start();
+    
     if (reason == REASON_VIEW_WILL_APPEAR)
     {
         sketch->start(CinderSketch::FLAG_FOCUS_GAINED);
@@ -79,6 +81,8 @@ using namespace chr;
 {
     timer.stop();
 
+    sketch->clock().stop();
+    
     if (reason == REASON_VIEW_WILL_DISAPPEAR)
     {
         sketch->stop(CinderSketch::FLAG_FOCUS_LOST);
@@ -185,6 +189,8 @@ static BOOL isIpadMini()
 - (void) update
 {
     io->poll();
+    
+    sketch->clock().update();
     sketch->update();
     frameCount++;
 }

@@ -13,70 +13,71 @@ using namespace ci;
 
 namespace chronotext
 {
-    Texture::Ref TextureManager::getTexture(const string &resourceName, bool useMipmap, TextureRequest::Flags flags)
+    Texture::Ref TextureManager::preloadTexture(const TextureRequest &textureRequest)
     {
-        return getTexture(InputSource::getResource(resourceName), useMipmap, flags);
-    }
-    
-    Texture::Ref TextureManager::getTexture(InputSource::Ref inputSource, bool useMipmap, TextureRequest::Flags flags)
-    {
-        return getTexture(TextureRequest(inputSource, useMipmap, flags));
-    }
-    
-    Texture::Ref TextureManager::getTexture(const TextureRequest &textureRequest, bool forceLoad)
-    {
-        auto it = textures.find(textureRequest);
-        
-        if (it != textures.end())
+        if (textureRequest.inputSource)
         {
-            if (forceLoad)
-            {
-                it->second->reload();
-            }
+            auto element = textures.find(textureRequest);
             
-            return it->second;
-        }
-        else if (forceLoad)
-        {
-            auto texture = make_shared<Texture>(textureRequest);
-            textures[textureRequest] = texture;
-            return texture;
+            if (element == textures.end())
+            {
+                auto texture = make_shared<Texture>(textureRequest); // CAN THROW
+                textures[textureRequest] = texture;
+                return texture;
+            }
+            else
+            {
+                return element->second;
+            }
         }
         
-        return Texture::Ref();
+        throw EXCEPTION(TextureManager, "INVALID INPUT-SOURCE");
     }
     
-    bool TextureManager::remove(const TextureRequest &textureRequest)
+    bool TextureManager::discardTexture(const TextureRequest &textureRequest)
     {
-        auto it = textures.find(textureRequest);
-        
-        if (it != textures.end())
+        if (textureRequest.inputSource)
         {
-            textures.erase(it);
-            return true;
+            auto element = textures.find(textureRequest);
+            
+            if (element != textures.end())
+            {
+                element->second->discard();
+                return true;
+            }
         }
         
         return false;
     }
     
-    void TextureManager::clear()
+    Texture* TextureManager::getTexture(const TextureRequest &textureRequest)
     {
-        textures.clear();
+        if (textureRequest.inputSource)
+        {
+            auto element = textures.find(textureRequest);
+            
+            if (element != textures.end())
+            {
+                return element->second.get(); // TEXTURE CAN BE IN A "DISCARDED" STATE
+            }
+        }
+        
+        return nullptr;
     }
     
-    void TextureManager::discard()
+    void TextureManager::discardTextures()
     {
-        for (auto &entry : textures)
+        for (auto &element : textures)
         {
-            entry.second->discard();
+            element.second->discard();
         }
     }
     
-    void TextureManager::reload()
+    void TextureManager::reloadTextures()
     {
-        for (auto &entry : textures)
+        for (auto &element : textures)
         {
-            entry.second->reload();
+            element.second->reload();
         }
     }
 }

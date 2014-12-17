@@ -15,13 +15,6 @@ using namespace std;
 
 namespace chronotext
 {
-    TextureAtlas::TextureAtlas(TextureManager &textureManager, const string &resourceName, bool useMipmap)
-    :
-    textureManager(textureManager)
-    {
-        init(InputSource::getResource(resourceName), useMipmap);
-    }
-    
     TextureAtlas::TextureAtlas(TextureManager &textureManager, InputSource::Ref inputSource, bool useMipmap)
     :
     textureManager(textureManager)
@@ -36,7 +29,8 @@ namespace chronotext
         auto texturePath = doc.getChild("TextureAtlas").getAttributeValue<string>("imagePath");
         auto textureSource = inputSource->getSubSource(texturePath);
         
-        texture = textureManager.getTexture(textureSource, useMipmap);
+        texture = textureManager.preloadTexture(TextureRequest(textureSource, useMipmap));
+        
         float width = texture->getWidth();
         float height = texture->getHeight();
         

@@ -19,17 +19,11 @@ namespace chronotext
     {
         sketch->setIOService(io_service());
         sketch->setup(false);
-        
-#if defined(CINDER_COCOA_TOUCH)
-        getSignalDidBecomeActive().connect(bind(&CinderApp::start, this));
-        getSignalWillResignActive().connect(bind(&CinderApp::stop, this));
-#endif
     }
     
     void CinderApp::shutdown()
     {
-        stop(); // XXX: CURRENTLY ONLY USED FOR FPS-COUNTER
-        sketch->stop(CinderSketch::FLAG_FOCUS_LOST);
+        stop(CinderSketch::FLAG_FOCUS_LOST);
         sketch->shutdown();
         delete sketch;
     }
@@ -40,8 +34,7 @@ namespace chronotext
         
         if (startCount == 0)
         {
-            start(); // XXX: CURRENTLY ONLY USED FOR FPS-COUNTER
-            sketch->start(CinderSketch::FLAG_FOCUS_GAINED);
+            start(CinderSketch::FLAG_FOCUS_GAINED);
             startCount++;
         }
     }
@@ -60,6 +53,7 @@ namespace chronotext
         
         // ---
         
+        sketch->clock().update();
         sketch->update();
         updateCount++;
     }
@@ -123,29 +117,19 @@ namespace chronotext
         sketch->sendMessage(Message(what, body));
     }
     
-#if defined(CINDER_ANDROID)
-    
-    void CinderApp::resume(bool renewContext)
-    {
-        sketch->setup(true);
-        sketch->start(CinderSketch::FLAG_APP_RESUMED);
-    }
-    
-    void CinderApp::pause()
-    {
-        sketch->stop(CinderSketch::FLAG_APP_PAUSED);
-        sketch->event(CinderSketch::EVENT_CONTEXT_LOST);
-    }
-    
-#endif
-    
-    void CinderApp::start()
+    void CinderApp::start(int flags)
     {
         ticks = 0;
+
+        sketch->clock().start();
+        sketch->start(flags);
     }
     
-    void CinderApp::stop()
+    void CinderApp::stop(int flags)
     {
+        sketch->clock().stop();
+        sketch->stop(flags);
+
         LOGI << "AVERAGE FRAME-RATE: " << ticks / elapsed << " FPS" << endl;
     }
 }

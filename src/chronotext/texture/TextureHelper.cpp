@@ -36,7 +36,7 @@ namespace chronotext
         
         if (textureData.undefined())
         {
-            throw Texture::Exception("TEXTURE IS UNDEFINED");
+            throw EXCEPTION(Texture, "TEXTURE IS UNDEFINED");
         }
         else
         {
@@ -44,7 +44,7 @@ namespace chronotext
             
             if (isOverSized(textureRequest, size))
             {
-                throw Texture::Exception("TEXTURE IS OVER-SIZED (" + toString(size.x) + "x" + toString(size.y) + ")");
+                throw EXCEPTION(Texture, "TEXTURE IS OVER-SIZED (" + toString(size.x) + "x" + toString(size.y) + ")");
             }
         }
         
@@ -53,38 +53,41 @@ namespace chronotext
     
     TextureData TextureHelper::fetchTextureData(const TextureRequest &textureRequest)
     {
-        if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.gz"))
+        if (textureRequest.inputSource)
         {
-            if (textureRequest.inputSource->isFile())
+            if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.gz"))
             {
-                return TextureData(textureRequest, PVRHelper::decompressPVRGZ(textureRequest.inputSource->getFilePath()));
+                if (textureRequest.inputSource->isFile())
+                {
+                    return TextureData(textureRequest, PVRHelper::decompressGZ(textureRequest.inputSource->getFilePath()));
+                }
+                else
+                {
+                    throw EXCEPTION(Texture, "PVR.GZ TEXTURES CAN ONLY BE LOADED FROM FILES");
+                }
+            }
+            else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.ccz"))
+            {
+                return TextureData(textureRequest, PVRHelper::decompressCCZ(textureRequest.inputSource->loadDataSource()));
+            }
+            else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr"))
+            {
+                return TextureData(textureRequest, textureRequest.inputSource->loadDataSource()->getBuffer());
             }
             else
             {
-                throw Texture::Exception("PVR.GZ TEXTURES CAN ONLY BE LOADED FROM FILES");
-            }
-        }
-        else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.ccz"))
-        {
-            return TextureData(textureRequest, PVRHelper::decompressPVRCCZ(textureRequest.inputSource->loadDataSource()));
-        }
-        else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr"))
-        {
-            return TextureData(textureRequest, textureRequest.inputSource->loadDataSource()->getBuffer());
-        }
-        else
-        {
-            if (textureRequest.flags == TextureRequest::FLAGS_TRANSLUCENT)
-            {
-                return TextureData(fetchTranslucentTextureData(textureRequest));
-            }
-            else if (textureRequest.flags & TextureRequest::FLAGS_POT)
-            {
-                return TextureData(fetchPowerOfTwoTextureData(textureRequest));
-            }
-            else
-            {
-                return TextureData(textureRequest, loadImage(textureRequest.inputSource->loadDataSource()));
+                if (textureRequest.flags == TextureRequest::FLAGS_TRANSLUCENT)
+                {
+                    return TextureData(fetchTranslucentTextureData(textureRequest));
+                }
+                else if (textureRequest.flags & TextureRequest::FLAGS_POT)
+                {
+                    return TextureData(fetchPowerOfTwoTextureData(textureRequest));
+                }
+                else
+                {
+                    return TextureData(textureRequest, loadImage(textureRequest.inputSource->loadDataSource()));
+                }
             }
         }
         
@@ -117,7 +120,7 @@ namespace chronotext
                     break;
                     
                 case TextureData::TYPE_PVR:
-                    texture = PVRHelper::getPVRTexture(textureData.buffer, format.hasMipmapping(), format.getWrapS(), format.getWrapT());
+                    texture = PVRHelper::loadTexture(textureData.buffer, format.hasMipmapping(), format.getWrapS(), format.getWrapT());
                     break;
                     
                 case TextureData::TYPE_DATA:
@@ -128,7 +131,7 @@ namespace chronotext
             
             if (glGetError() == GL_OUT_OF_MEMORY)
             {
-                throw Texture::Exception("GL: OUT-OF-MEMORY");
+                throw EXCEPTION(Texture, "GL: OUT-OF-MEMORY");
             }
             else if (texture)
             {

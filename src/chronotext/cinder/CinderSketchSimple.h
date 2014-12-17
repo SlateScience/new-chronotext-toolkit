@@ -20,7 +20,9 @@ namespace chronotext
     {
     public:
         CinderSketchSimple(void *context, void *delegate = NULL);
-        
+
+        FrameClock& clock() const { return *mClock; }
+
         std::ostream& console() { return context->console(); }
         boost::asio::io_service& io_service() const { return context->io_service(); }
         
@@ -42,6 +44,8 @@ namespace chronotext
     protected:
         ci::app::AppNative *context;
         CinderApp *delegate;
+        
+        std::shared_ptr<FrameClock> mClock;
         float mDensity;
     };
 }

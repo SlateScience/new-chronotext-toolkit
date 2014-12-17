@@ -177,6 +177,8 @@ namespace chronotext
         processSensorEvents();
         
         io->poll();
+        
+        sketch->clock().update();
         sketch->update();
         mFrameCount++;
 
@@ -189,29 +191,21 @@ namespace chronotext
         {
             case EVENT_ATTACHED:
             case EVENT_SHOWN:
-                mFrameCount = 0;
-                mTimer.start();
-                sketch->start(CinderSketch::FLAG_FOCUS_GAINED);
+                start(CinderSketch::FLAG_FOCUS_GAINED);
                 break;
                 
             case EVENT_RESUMED:
-                mFrameCount = 0;
-                mTimer.start();
-                
                 sketch->setup(true); // ASSERTIONS: THE GL CONTEXT WAS JUST RE-CREATED, WITH THE SAME DIMENSIONS AS BEFORE
-                sketch->start(CinderSketch::FLAG_APP_RESUMED);
+                start(CinderSketch::FLAG_APP_RESUMED);
                 break;
                 
             case EVENT_DETACHED:
             case EVENT_HIDDEN:
-                mTimer.stop();
-                sketch->stop(CinderSketch::FLAG_FOCUS_LOST);
+                stop(CinderSketch::FLAG_FOCUS_LOST);
                 break;
                 
             case EVENT_PAUSED:
-                mTimer.stop();
-                
-                sketch->stop(CinderSketch::FLAG_APP_PAUSED);
+                stop(CinderSketch::FLAG_APP_PAUSED);
                 sketch->event(CinderSketch::EVENT_CONTEXT_LOST); // ASSERTION: THE GL CONTEXT IS ABOUT TO BE LOST
                 break;
                 
@@ -223,6 +217,23 @@ namespace chronotext
                 sketch->event(CinderSketch::EVENT_FOREGROUND);
                 break;
         }
+    }
+    
+    void CinderDelegate::start(int flags)
+    {
+        mFrameCount = 0;
+        mTimer.start();
+
+        sketch->clock().start();
+        sketch->start(flags);
+    }
+    
+    void CinderDelegate::stop(int flags)
+    {
+        mTimer.stop();
+        
+        sketch->clock().stop();
+        sketch->stop(flags);
     }
     
     void CinderDelegate::addTouch(int index, float x, float y)

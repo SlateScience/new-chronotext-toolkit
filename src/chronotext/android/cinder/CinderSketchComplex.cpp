@@ -19,7 +19,8 @@ namespace chronotext
     :
     CinderSketchBase(),
     context(static_cast<CinderDelegate*>(context)),
-    delegate(static_cast<CinderDelegate*>(delegate))
+    delegate(static_cast<CinderDelegate*>(delegate)),
+    mClock(FrameClock::create())
     {}
     
     void CinderSketchComplex::enableAccelerometer(float updateFrequency, float filterFactor)

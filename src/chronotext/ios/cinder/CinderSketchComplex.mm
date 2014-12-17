@@ -20,7 +20,8 @@ namespace chronotext
     :
     CinderSketchBase(),
     context(context),
-    delegate(delegate)
+    delegate(delegate),
+    mClock(FrameClock::create())
     {}
     
     void CinderSketchComplex::touchesBegan(TouchEvent event)

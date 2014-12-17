@@ -10,6 +10,7 @@
 
 #include "chronotext/cinder/WindowInfo.h"
 #include "chronotext/os/SuperHandler.h"
+#include "chronotext/time/FrameClock.h"
 #include "chronotext/utils/accel/AccelEvent.h"
 
 #include <boost/asio.hpp>
@@ -58,7 +59,9 @@ namespace chronotext
         virtual void accelerated(AccelEvent event) {}
         virtual void enableAccelerometer(float updateFrequency = 30, float filterFactor = 0.1f) {}
         virtual void disableAccelerometer() {}
-        
+
+        virtual FrameClock& clock() const = 0;
+
         virtual std::ostream& console() = 0;
         virtual boost::asio::io_service& io_service() const = 0;
         

@@ -35,8 +35,9 @@ namespace chronotext
             }
         };
         
-        enum
+        enum Type
         {
+            TYPE_UNDEFINED,
             TYPE_RESOURCE,
             TYPE_RESOURCE_MSW,
             TYPE_FILE,
@@ -89,7 +90,7 @@ namespace chronotext
         static InputSource::Ref getFileInDocuments(const ci::fs::path &relativePath);
         static ci::DataSourceRef loadFileInDocuments(const ci::fs::path &relativePath);
 
-        InputSource(int type)
+        InputSource(Type type = TYPE_UNDEFINED)
         :
         type(type)
         {}

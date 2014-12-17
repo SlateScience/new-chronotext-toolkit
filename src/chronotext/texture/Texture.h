@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "chronotext/Exception.h"
 #include "chronotext/texture/TextureData.h"
 
 namespace chronotext
@@ -17,20 +18,6 @@ namespace chronotext
     public:
         typedef std::shared_ptr<Texture> Ref;
 
-        class Exception : public std::exception
-        {
-            std::string message;
-            
-        public:
-            Exception(const std::string &what) throw() : message(what) {}
-            ~Exception() throw() {}
-            
-            const char* what() const throw()
-            {
-                return message.c_str();
-            }
-        };
-        
         TextureRequest request;
 
         Texture(InputSource::Ref inputSource, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);

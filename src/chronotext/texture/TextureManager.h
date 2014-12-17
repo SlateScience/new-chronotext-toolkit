@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "chronotext/texture/TextureHelper.h"
 #include "chronotext/texture/Texture.h"
 
 #include <map>
@@ -18,15 +17,16 @@ namespace chronotext
     class TextureManager
     {
     public:
-        Texture::Ref getTexture(const std::string &resourceName, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
-        Texture::Ref getTexture(InputSource::Ref inputSource, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
-        Texture::Ref getTexture(const TextureRequest &textureRequest, bool forceLoad = true);
-        
-        bool remove(const TextureRequest &textureRequest);
-        void clear();
-        
-        void discard();
-        void reload();
+        Texture::Ref preloadTexture(const TextureRequest &textureRequest); // CAN THROW
+        bool discardTexture(const TextureRequest &textureRequest);
+
+        /*
+         * THE RETURNED POINTER IS NOT INTENDED FOR STORAGE
+         */
+        Texture* getTexture(const TextureRequest &textureRequest);
+
+        void discardTextures();
+        void reloadTextures();
         
     protected:
         std::map<TextureRequest, Texture::Ref> textures;

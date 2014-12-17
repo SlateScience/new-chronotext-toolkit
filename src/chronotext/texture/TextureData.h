@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "chronotext/InputSource.h"
 #include "chronotext/texture/TextureRequest.h"
 #include "chronotext/texture/PVRHelper.h"
 
@@ -110,7 +109,7 @@ namespace chronotext
                         return ci::Vec2i(imageSource->getWidth(), imageSource->getHeight());
                         
                     case TextureData::TYPE_PVR:
-                        return PVRHelper::getPVRTextureSize(buffer);
+                        return PVRHelper::getTextureSize(buffer);
                         
                     case TextureData::TYPE_DATA:
                         return ci::Vec2i(width, height);

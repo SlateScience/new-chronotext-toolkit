@@ -24,6 +24,8 @@ namespace chronotext
         void enableAccelerometer(float updateFrequency = 30, float filterFactor = 0.1f);
         void disableAccelerometer();
         
+        FrameClock& clock() const { return *mClock; }
+        
         std::ostream& console();
         boost::asio::io_service& io_service() const;
         
@@ -45,6 +47,8 @@ namespace chronotext
     protected:
         CinderDelegate *context;
         CinderDelegate *delegate;
+        
+        std::shared_ptr<FrameClock> mClock;
     };
 }
 

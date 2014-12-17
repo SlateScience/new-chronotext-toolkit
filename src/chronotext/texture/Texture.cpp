@@ -125,7 +125,12 @@ namespace chronotext
     
     size_t Texture::getMemoryUsage() const
     {
-        return width * height * 4 * (request.useMipmap ? 1.33f : 1); // XXX: TEMPORARY
+        if (target)
+        {
+            return width * height * 4 * (request.useMipmap ? 1.33f : 1); // XXX: TEMPORARY
+        }
+        
+        return 0;
     }
 
     // ---
@@ -236,8 +241,8 @@ namespace chronotext
         if (!target)
         {
             target = texture;
-            
             textureId = texture->getId();
+            
             width = texture->getWidth();
             height = texture->getHeight();
             maxU = texture->getMaxU();
@@ -250,12 +255,7 @@ namespace chronotext
         if (target)
         {
             target.reset();
-            
             textureId = 0;
-            width = 0;
-            height = 0;
-            maxU = 0;
-            maxV = 0;
         }
     }
 }

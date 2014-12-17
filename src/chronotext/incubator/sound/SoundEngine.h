@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "chronotext/Exception.h"
 #include "chronotext/incubator/sound/Effect.h"
 
 #include <map>
@@ -147,7 +148,7 @@ protected:
     
     std::set<Listener*> listeners;
     
-    Effect* loadEffect(chr::InputSource::Ref inputSource); // CAN THROW
+    Effect* loadEffect(chr::InputSource::Ref inputSource);
     bool interruptChannel(int channelId);
     
     Event createEvent(Type type, int effectId, int channelId, int playingId);
