@@ -81,6 +81,8 @@ namespace chronotext
          */
         bool cancelTask(int taskId);
         
+        bool isThreadSafe();
+        
     protected:
         boost::asio::io_service &io;
 
@@ -91,8 +93,6 @@ namespace chronotext
         std::set<int> startedTasks;
         std::set<int> postponedTasks;
         std::queue<int> taskQueue;
-        
-        bool isThreadSafe();
         
     private:
         friend class Task;
