@@ -8,17 +8,18 @@
 
 #include "Task.h"
 
-#include "chronotext/os/TaskManager.h"
+#include "chronotext/Context.h"
 #include "chronotext/utils/Utils.h"
 
 #include <chrono>
 
 using namespace std;
 using namespace ci;
+using namespace context;
 
 namespace chr
 {
-    bool Task::VERBOSE = true;
+    bool Task::VERBOSE = false;
     
     void Task::sleep(double seconds)
     {
@@ -75,13 +76,13 @@ namespace chr
     
     bool Task::post(function<void()> &&fn)
     {
-        return manager->post(forward<function<void()>>(fn), synchronous);
+        return os::post(forward<function<void()>>(fn), synchronous);
     }
     
     // ---
     
     /*
-     * INVOKED ON THE IO-THREAD, FROM TaskManager::addTask()
+     * INVOKED ON THE SKETCH-THREAD, FROM TaskManager::addTask()
      */
     
     void Task::start(bool forceSync)
@@ -111,16 +112,17 @@ namespace chr
     }
     
     /*
-     * INVOKED ON THE IO-THREAD, FROM TaskManager::cancelTask()
+     * INVOKED ON THE SKETCH-THREAD, FROM TaskManager::cancelTask()
      */
     
     void Task::cancel()
     {
+        lock_guard<mutex> lock(_mutex);
+
         if (!synchronous && state.started)
         {
             LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " | " << taskId << " | " << this << endl;
             
-            lock_guard<mutex> lock(_mutex);
             state.cancelRequired = true;
         }
         else
@@ -145,10 +147,10 @@ namespace chr
     }
     
     /*
-     * INVOKED ON THE IO-THREAD, FROM TaskManager::registerTask()
+     * INVOKED ON THE SKETCH-THREAD, FROM TaskManager::registerTask()
      */
     
-    bool Task::performInit(TaskManager *manager, int taskId)
+    bool Task::performInit(shared_ptr<TaskManager> manager, int taskId)
     {
         if (!state.initialized)
         {
@@ -192,9 +194,11 @@ namespace chr
             state.ended = true;
             
             /*
-             * IT IS NECESSARY TO WAIT FOR THE LAMBDAS WHICH MAY HAVE BEEN POSTED BY DURING Task::run()
+             * IT IS NECESSARY TO WAIT FOR THE FUNCTIONS WHICH MAY HAVE BEEN POSTED BY DURING Task::run()
+             *
+             * TODO: CONSIDER USING A LAMBDA INSTEAD OF bind
              */
-            manager->post([=]{ manager->endTask(taskId); });
+            os::post(bind(&TaskManager::endTask, manager, taskId), false);
             
             LOGI_IF(VERBOSE) << __PRETTY_FUNCTION__ << " [END] | " << taskId << " | " << this << endl;
             
@@ -213,7 +217,7 @@ namespace chr
     }
     
     /*
-     * INVOKED ON THE IO-THREAD
+     * INVOKED ON THE SKETCH-THREAD
      *
      * OPTION 1: FROM TaskManager::cancelTask()
      * OPTION 2: FROM TaskManager::endTask()

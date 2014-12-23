@@ -14,6 +14,7 @@
 #import "CinderDelegate.h"
 #import "GLViewController.h"
 
+#include "chronotext/Context.h"
 #include "chronotext/utils/accel/AccelEvent.h"
 
 #include <sys/utsname.h>
@@ -51,10 +52,12 @@ using namespace chr;
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    io->stop();
 
     sketch->shutdown();
     delete sketch;
+    
+    io->stop();
+    CONTEXT::shutdown();
     
     [super dealloc];
 }
@@ -162,7 +165,7 @@ static BOOL isIpadMini()
             break;
     }
     
-    windowInfo.density = 0; // TODO
+    windowInfo.density = 0;
     
     if(isIpadMini()) {
         windowInfo.density = 163 * scale;
@@ -179,7 +182,8 @@ static BOOL isIpadMini()
     io = make_shared<boost::asio::io_service>();
     ioWork = make_shared<boost::asio::io_service::work>(*io);
 
-    sketch->setIOService(*io);
+    CONTEXT::setup(*io);
+    
     sketch->setup(false);
     sketch->resize();
     

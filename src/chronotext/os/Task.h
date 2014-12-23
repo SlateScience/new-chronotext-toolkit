@@ -7,7 +7,17 @@
  */
 
 /*
- * REFERENCE VERSION: https://github.com/arielm/new-chronotext-toolkit/blob/ContextRework/src/chronotext/os/Task.h
+ * ADDITIONAL CONTRIBUTORS: MICHAEL BOCCARA
+ */
+
+/*
+ *  TODO:
+ *
+ * 1) TEST AND DEVELOP FURTHER:
+ *    - SEE "INNER" TODOS IN TaskManager AND Task
+ *
+ * 2) IMPLEMENT THREAD ATTACHMENT/DETACHMENT TO/FROM JAVA ON ANDROID
+ *    - STUDY JNI'S AttachCurrentThread / DetachCurrentThread
  */
 
 #pragma once
@@ -48,7 +58,7 @@ namespace chr
     protected:
         State state;
         
-        TaskManager *manager;
+        std::shared_ptr<TaskManager> manager;
         int taskId;
         bool synchronous;
         
@@ -66,7 +76,7 @@ namespace chr
         void cancel();
         void detach();
         
-        bool performInit(TaskManager *manager, int taskId);
+        bool performInit(std::shared_ptr<TaskManager> manager, int taskId);
         void performShutdown();
         void performRun();
     };

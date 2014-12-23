@@ -6,7 +6,9 @@
  * https://github.com/arielm/new-chronotext-toolkit/blob/master/LICENSE.md
  */
 
-#include "chronotext/android/cinder/CinderDelegate.h"
+#include "CinderDelegate.h"
+
+#include "chronotext/Context.h"
 #include "chronotext/FileSystem.h"
 #include "chronotext/utils/accel/AccelEvent.h"
 
@@ -155,7 +157,8 @@ namespace chr
         io = make_shared<boost::asio::io_service>();
         ioWork = make_shared<boost::asio::io_service::work>(*io);
         
-        sketch->setIOService(*io);
+        CONTEXT::setup(*io);
+        
         sketch->setup(false);
         sketch->resize();
     }
@@ -167,6 +170,8 @@ namespace chr
         
         sketch->shutdown();
         delete sketch;
+        
+        CONTEXT::shutdown();
     }
     
     void CinderDelegate::draw()

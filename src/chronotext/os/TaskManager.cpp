@@ -8,23 +8,23 @@
 
 #include "TaskManager.h"
 
+#include "chronotext/Context.h"
+
 using namespace std;
+using namespace context;
 
 namespace chr
 {
     int TaskManager::MAX_CONCURRENT_THREADS = 4; // XXX: RAW MECHANISM, AS FOR NOW
     
-    TaskManager::TaskManager(boost::asio::io_service &io)
+    TaskManager::TaskManager()
     :
-    taskCount(0),
-    io(io)
-    {
-        threadId = this_thread::get_id();
-    }
+    taskCount(0)
+    {}
     
     Task* TaskManager::getTask(int taskId)
     {
-        if (isThreadSafe())
+        if (os::isThreadSafe())
         {
             auto element = tasks.find(taskId);
             
@@ -39,7 +39,7 @@ namespace chr
     
     int TaskManager::registerTask(shared_ptr<Task> task)
     {
-        if (isThreadSafe())
+        if (os::isThreadSafe())
         {
             for (auto &element : tasks)
             {
@@ -49,7 +49,7 @@ namespace chr
                 }
             }
             
-            if (task->performInit(this, taskCount + 1))
+            if (task->performInit(shared_from_this(), taskCount + 1))
             {
                 tasks[++taskCount] = task;
                 return taskCount;
@@ -61,7 +61,7 @@ namespace chr
     
     bool TaskManager::addTask(int taskId, bool forceSync)
     {
-        if (isThreadSafe())
+        if (os::isThreadSafe())
         {
             auto element = tasks.find(taskId);
             
@@ -83,8 +83,8 @@ namespace chr
                         /*
                          * TODO:
                          *
-                         * 1) ALLOW TASKS TO "REQUIRE" POSTPONING?
-                         *    E.G. VIA SOME ENUM RETURNED BY Task::start()
+                         * ALLOW TASKS TO "REQUIRE" POSTPONING?
+                         * E.G. VIA SOME ENUM RETURNED BY Task::start()
                          */
                         
                         if ((MAX_CONCURRENT_THREADS > 0) && (startedTasks.size() >= MAX_CONCURRENT_THREADS))
@@ -110,7 +110,7 @@ namespace chr
     
     bool TaskManager::cancelTask(int taskId)
     {
-        if (isThreadSafe())
+        if (os::isThreadSafe())
         {
             auto element = tasks.find(taskId);
             
@@ -139,39 +139,13 @@ namespace chr
     
     // ---
     
-    bool TaskManager::isThreadSafe()
-    {
-        return threadId == this_thread::get_id();
-    }
-    
-    // ---
-    
-    bool TaskManager::post(function<void()> &&fn, bool forceSync)
-    {
-        if (forceSync)
-        {
-            if (isThreadSafe())
-            {
-                fn();
-                return true;
-            }
-        }
-        else if (true) // TODO: SHOULD BE FALSE IF THE CONTEXT IS BEING SHUT-DOWN
-        {
-            io.post(forward<function<void()>>(fn));
-            return true;
-        }
-        
-        return false;
-    }
-    
     /*
      * POSTED FROM Task::performRun()
      */
     
     void TaskManager::endTask(int taskId)
     {
-        assert(isThreadSafe());
+        assert(os::isThreadSafe());
         
         auto element = tasks.find(taskId);
         
@@ -192,7 +166,7 @@ namespace chr
     
     void TaskManager::nextTask()
     {
-        assert(isThreadSafe());
+        assert(os::isThreadSafe());
 
         if (!taskQueue.empty())
         {

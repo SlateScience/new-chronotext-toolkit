@@ -7,7 +7,18 @@
  */
 
 /*
- * REFERENCE VERSION: https://github.com/arielm/new-chronotext-toolkit/blob/ContextRework/src/chronotext/os/TaskManager.h
+ * ADDITIONAL CONTRIBUTORS: MICHAEL BOCCARA
+ */
+
+/*
+ * TODO:
+ *
+ * 1) TEST AND DEVELOP FURTHER:
+ *    - SEE "INNER" TODOS IN TaskManager AND Task
+ *
+ * 2) TRY TO USE NEW C++11 FEATURES LIKE std::future, std::async OR std::thread_local
+ *
+ * 3) CREATE TESTS AND SAMPLES PROJECTS
  */
 
 #pragma once
@@ -18,8 +29,6 @@
 #include <set>
 #include <queue>
 
-#include <boost/asio.hpp>
-
 namespace chr
 {
     class TaskManager : public std::enable_shared_from_this<TaskManager>
@@ -27,12 +36,15 @@ namespace chr
     public:
         static int MAX_CONCURRENT_THREADS;
 
-        TaskManager(boost::asio::io_service &io);
+        static std::shared_ptr<TaskManager> create()
+        {
+            return std::shared_ptr<TaskManager>(new TaskManager());
+        }
         
         /*
          * RETURNS NULL IF:
          *
-         * - NOT INVOKED ON THE IO-THREAD
+         * - NOT INVOKED ON THE SKETCH-THREAD
          * - NO TASK IS REGISTERED WITH THIS ID
          *
          * NOTE: THE RETURNED POINTER IS NOT INTENDED FOR STORAGE
@@ -44,7 +56,7 @@ namespace chr
          *
          * CAUSES:
          *
-         * - NOT INVOKED ON THE IO-THREAD
+         * - NOT INVOKED ON THE SKETCH-THREAD
          * - THE TASK IS ALREADY REGISTERED (TASKS ARE NOT REUSABLE)
          * - Task::init() RETURNED FALSE
          */
@@ -55,7 +67,7 @@ namespace chr
          *
          * CAUSES:
          *
-         * - NOT INVOKED ON THE IO-THREAD
+         * - NOT INVOKED ON THE SKETCH-THREAD
          * - NO TASK IS REGISTERED WITH THIS ID
          * - THE TASK HAS ALREADY BEEN ADDED
          * - IO-SERVICE IS NOT DEFINED
@@ -69,11 +81,11 @@ namespace chr
         }
         
         /*
-         * RETURNS FALSE IF THE TASK CAN'T BE CANCELLED (OR REMOVED IF NOT YET STARTED)
+         * RETURNS FALSE IF THE TASK CAN'T BE CANCELLED (OR CAN'T BE REMOVED IF NOT STARTED YET)
          *
          * CAUSES:
          *
-         * - NOT INVOKED ON THE IO-THREAD
+         * - NOT INVOKED ON THE SKETCH-THREAD
          * - NO TASK IS REGISTERED WITH THIS ID
          *
          * ASYNCHRONOUS TASKS ONLY:
@@ -81,12 +93,7 @@ namespace chr
          */
         bool cancelTask(int taskId);
         
-        bool isThreadSafe();
-        
     protected:
-        boost::asio::io_service &io;
-
-        std::thread::id threadId;
         int taskCount;
         
         std::map<int, std::shared_ptr<Task>> tasks;
@@ -99,19 +106,6 @@ namespace chr
         
         TaskManager();
         TaskManager(const TaskManager &other) = delete;
-        
-        /*
-         * RETURNS FALSE IF THE LAMBDA CAN'T BE POSTED
-         *
-         * CAUSES:
-         *
-         * - IO-SERVICE IS NOT DEFINED
-         * - THE CONTEXT IS BEING SHUT-DOWN (TODO)
-         *
-         * SYNCHRONOUS TASKS ONLY:
-         * - NOT INVOKED ON THE IO-THREAD
-         */
-        bool post(std::function<void()> &&fn, bool forceSync = false);
         
         void endTask(int taskId);
         void nextTask();

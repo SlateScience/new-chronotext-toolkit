@@ -6,7 +6,9 @@
  * https://github.com/arielm/new-chronotext-toolkit/blob/master/LICENSE.md
  */
 
-#include "chronotext/cinder/CinderApp.h"
+#include "CinderApp.h"
+
+#include "chronotext/Context.h"
 #include "chronotext/utils/Utils.h"
 
 using namespace std;
@@ -17,15 +19,18 @@ namespace chr
 {
     void CinderApp::setup()
     {
-        sketch->setIOService(io_service());
+        CONTEXT::setup(io_service());
         sketch->setup(false);
     }
     
     void CinderApp::shutdown()
     {
         stop(CinderSketch::FLAG_FOCUS_LOST);
+        
         sketch->shutdown();
         delete sketch;
+        
+        CONTEXT::shutdown();
     }
     
     void CinderApp::resize()
