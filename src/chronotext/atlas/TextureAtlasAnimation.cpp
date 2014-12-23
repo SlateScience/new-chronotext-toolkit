@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace chronotext
+namespace chr
 {
     TextureAtlasAnimation::TextureAtlasAnimation(TextureAtlas &atlas, const string &path, float fps, bool looping, bool reverse)
     :

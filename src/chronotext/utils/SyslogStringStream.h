@@ -27,7 +27,7 @@
 
 #include <syslog.h>
 
-namespace chronotext
+namespace chr
 {
     namespace mac
     {
@@ -77,5 +77,3 @@ namespace chronotext
         typedef basic_dostream<char> dostream;
     }
 }
-
-namespace chr = chronotext;

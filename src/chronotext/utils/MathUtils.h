@@ -14,7 +14,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace chronotext
+namespace chr
 {
     static const float D2R = M_PI / 180.0;
     static const float R2D = 180.0 / M_PI;
@@ -114,4 +114,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

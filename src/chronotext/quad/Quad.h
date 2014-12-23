@@ -10,7 +10,7 @@
 
 #include "cinder/Rect.h"
 
-namespace chronotext
+namespace chr
 {
     struct Quad
     {
@@ -66,4 +66,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

@@ -19,7 +19,7 @@
 #include <set>
 #include <map>
 
-namespace chronotext
+namespace chr
 {
     typedef class zf::VirtualFont ZFont;
 
@@ -192,4 +192,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

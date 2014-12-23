@@ -12,7 +12,7 @@
 
 #include "chronotext/cinder/CinderSketchBase.h"
 
-namespace chronotext
+namespace chr
 {
     class CinderSketchComplex : public CinderSketchBase
     {
@@ -54,4 +54,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

@@ -10,7 +10,7 @@
 
 #include "chronotext/texture/TextureData.h"
 
-namespace chronotext
+namespace chr
 {
     class TextureHelper
     {
@@ -31,4 +31,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

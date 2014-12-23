@@ -15,7 +15,7 @@
 
 #include <map>
 
-namespace chronotext
+namespace chr
 {
     typedef class xf::Font XFont;
 
@@ -181,5 +181,3 @@ namespace chronotext
         };
     }
 }
-
-namespace chr = chronotext;

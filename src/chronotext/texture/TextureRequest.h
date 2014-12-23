@@ -12,7 +12,7 @@
 
 #include "cinder/gl/Texture.h"
 
-namespace chronotext
+namespace chr
 {
     struct TextureRequest
     {
@@ -94,4 +94,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace chronotext
+namespace chr
 {
     class TimeBase : public std::enable_shared_from_this<TimeBase>
     {
@@ -22,4 +22,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

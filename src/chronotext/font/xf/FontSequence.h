@@ -10,7 +10,7 @@
 
 #include "chronotext/quad/QuadBatch.h"
 
-namespace chronotext
+namespace chr
 {
     namespace xf
     {
@@ -39,5 +39,3 @@ namespace chronotext
         };
     }
 }
-
-namespace chr = chronotext;

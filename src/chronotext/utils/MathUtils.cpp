@@ -11,7 +11,7 @@
 using namespace std;
 using namespace ci;
 
-namespace chronotext
+namespace chr
 {
     bool MathUtils::isRectNull(const Rectf &rect)
     {

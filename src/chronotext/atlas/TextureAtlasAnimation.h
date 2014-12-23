@@ -10,7 +10,7 @@
 
 #include "chronotext/atlas/TextureAtlas.h"
 
-namespace chronotext
+namespace chr
 {
     class TextureAtlasAnimation
     {
@@ -40,5 +40,3 @@ namespace chronotext
         bool looping;
     };
 }
-
-namespace chr = chronotext;

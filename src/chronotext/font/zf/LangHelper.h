@@ -20,7 +20,7 @@
 #include <set>
 #include <string>
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {
@@ -92,4 +92,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

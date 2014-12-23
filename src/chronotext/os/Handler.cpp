@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace chronotext
+namespace chr
 {
     Handler::Handler()
     :

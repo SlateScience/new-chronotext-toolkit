@@ -47,7 +47,7 @@ static const FT_ULong SPACE_SEPARATORS[] =
 
 static const size_t SPACE_SEPARATORS_COUNT = sizeof(SPACE_SEPARATORS) / sizeof(FT_ULong);
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {

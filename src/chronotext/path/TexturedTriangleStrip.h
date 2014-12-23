@@ -12,7 +12,7 @@
 
 #include <vector>
 
-namespace chronotext
+namespace chr
 {
     struct TexturedTriangleStrip
     {

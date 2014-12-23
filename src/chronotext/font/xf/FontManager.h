@@ -11,7 +11,7 @@
 #include "chronotext/InputSource.h"
 #include "chronotext/font/xf/Font.h"
 
-namespace chronotext
+namespace chr
 {
     namespace xf
     {
@@ -109,5 +109,3 @@ namespace chronotext
         };
     }
 }
-
-namespace chr = chronotext;

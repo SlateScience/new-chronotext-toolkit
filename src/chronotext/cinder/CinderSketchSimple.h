@@ -12,7 +12,7 @@
 
 #include "chronotext/cinder/CinderSketchBase.h"
 
-namespace chronotext
+namespace chr
 {
     class CinderApp;
     
@@ -49,5 +49,3 @@ namespace chronotext
         float mDensity;
     };
 }
-
-namespace chr = chronotext;

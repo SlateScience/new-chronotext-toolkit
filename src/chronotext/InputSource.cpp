@@ -14,7 +14,7 @@
 using namespace std;
 using namespace ci;
 
-namespace chronotext
+namespace chr
 {
     InputSource::Ref InputSource::getResource(const ci::fs::path &relativePath)
     {

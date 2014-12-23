@@ -10,7 +10,7 @@
 
 #include "chronotext/texture/Texture.h"
 
-namespace chronotext
+namespace chr
 {
     class Sprite
     {
@@ -48,4 +48,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

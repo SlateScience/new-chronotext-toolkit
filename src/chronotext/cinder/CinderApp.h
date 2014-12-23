@@ -12,7 +12,7 @@
 
 #include "chronotext/cinder/CinderSketch.h"
 
-namespace chronotext
+namespace chr
 {
     class CinderApp : public ci::app::AppNative
     {
@@ -57,5 +57,3 @@ namespace chronotext
         void stop(int flags);
     };
 }
-
-namespace chr = chronotext;

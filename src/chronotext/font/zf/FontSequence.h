@@ -11,7 +11,7 @@
 #include "chronotext/quad/QuadBatchMap.h"
 #include "chronotext/font/zf/FontTexture.h"
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {
@@ -40,4 +40,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

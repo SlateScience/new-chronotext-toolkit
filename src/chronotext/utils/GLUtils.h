@@ -12,7 +12,7 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Camera.h"
 
-namespace chronotext
+namespace chr
 {
     void bindTexture(ci::gl::Texture *texture);
     void unbindTexture();
@@ -45,4 +45,4 @@ namespace cinder
     }
 }
 
-namespace chr = chronotext;
+

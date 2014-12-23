@@ -33,7 +33,7 @@
 #include "cinder/Filesystem.h"
 #include "cinder/gl/Texture.h"
 
-namespace chronotext
+namespace chr
 {
     class PVRHelper
     {
@@ -48,4 +48,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

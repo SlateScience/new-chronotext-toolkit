@@ -12,7 +12,7 @@
 
 #include <map>
 
-namespace chronotext
+namespace chr
 {
     class TextureManager
     {
@@ -33,4 +33,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

@@ -13,7 +13,7 @@
 using namespace std;
 using namespace ci;
 
-namespace chronotext
+namespace chr
 {
     void bindTexture(gl::Texture *texture)
     {

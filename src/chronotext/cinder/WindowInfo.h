@@ -10,7 +10,7 @@
 
 #include "cinder/Vector.h"
 
-namespace chronotext
+namespace chr
 {
     struct WindowInfo
     {
@@ -20,5 +20,3 @@ namespace chronotext
         int aaLevel;
     };
 }
-
-namespace chr = chronotext;

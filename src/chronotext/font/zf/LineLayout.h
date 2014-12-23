@@ -10,7 +10,7 @@
 
 #include "chronotext/font/zf/ActualFont.h"
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {
@@ -58,4 +58,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

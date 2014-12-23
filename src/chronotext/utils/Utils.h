@@ -27,7 +27,7 @@
 #include "chronotext/utils/SyslogStringStream.h"
 #endif
 
-namespace chronotext
+namespace chr
 {
 #if defined(CINDER_MSW)
     static ci::msw::dostream *CHROUT;
@@ -169,7 +169,7 @@ namespace chronotext
     uint64_t millisSinceEpoch();
 }
 
-namespace chr = chronotext;
+
 
 #define LOGI chr::chrout()
 #define LOGI_IF(COND) (COND) && LOGI

@@ -25,7 +25,7 @@
 
 #include "tesselator.h"
 
-namespace chronotext
+namespace chr
 {
     class ShapeTesselator
     {
@@ -47,4 +47,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

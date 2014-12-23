@@ -14,7 +14,7 @@
 
 #include "cinder/Thread.h"
 
-namespace chronotext
+namespace chr
 {
     class TaskManager;
     
@@ -71,5 +71,3 @@ namespace chronotext
         void performRun();
     };
 }
-
-namespace chr = chronotext;

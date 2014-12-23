@@ -14,7 +14,7 @@ using namespace std;
 using namespace ci;
 using namespace app;
 
-namespace chronotext
+namespace chr
 {
     CinderSketchComplex::CinderSketchComplex(void *context, void *delegate)
     :

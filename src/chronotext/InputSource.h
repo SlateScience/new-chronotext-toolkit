@@ -14,7 +14,7 @@
 
 #include <exception>
 
-namespace chronotext
+namespace chr
 {
     class InputSource
     {
@@ -116,4 +116,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

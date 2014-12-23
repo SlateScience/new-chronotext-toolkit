@@ -15,7 +15,7 @@
 
 #include "cinder/android/LogStream.h"
 
-namespace chronotext
+namespace chr
 {
     class CinderDelegate
     {
@@ -134,5 +134,3 @@ namespace chronotext
         jdouble callDoubleMethodOnJavaListener(const char *name, const char *sig, ...);
     };
 }
-
-namespace chr = chronotext;

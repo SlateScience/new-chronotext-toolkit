@@ -14,7 +14,7 @@
 
 #include <array>
 
-namespace chronotext
+namespace chr
 {
     class QuadMatrix
     {
@@ -68,4 +68,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

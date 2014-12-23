@@ -13,7 +13,7 @@
 using namespace ci;
 using namespace std;
 
-namespace chronotext
+namespace chr
 {
     FollowablePath::FollowablePath(int capacity)
     :

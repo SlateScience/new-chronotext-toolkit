@@ -16,7 +16,7 @@
 
 #include <boost/asio.hpp>
 
-namespace chronotext
+namespace chr
 {
     class Handler
     {
@@ -47,4 +47,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

@@ -20,7 +20,7 @@
 
 #include <boost/asio.hpp>
 
-namespace chronotext
+namespace chr
 {
     class TaskManager : public std::enable_shared_from_this<TaskManager>
     {

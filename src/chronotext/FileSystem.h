@@ -16,7 +16,7 @@
 #include <android/asset_manager.h>
 #endif
 
-namespace chronotext
+namespace chr
 {
     class FileSystem
     {
@@ -56,4 +56,4 @@ namespace chronotext
 #endif
 }
 
-namespace chr = chronotext;
+

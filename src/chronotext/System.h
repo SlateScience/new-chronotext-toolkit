@@ -10,7 +10,7 @@
 
 #include <string>
 
-namespace chronotext
+namespace chr
 {
     class System
     {
@@ -18,5 +18,3 @@ namespace chronotext
         static std::string getIPAddress(bool maskForBroadcast = false);
     };
 }
-
-namespace chr = chronotext;

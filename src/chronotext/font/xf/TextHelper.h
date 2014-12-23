@@ -11,7 +11,7 @@
 #include "chronotext/font/xf/Font.h"
 #include "chronotext/path/FollowablePath.h"
 
-namespace chronotext
+namespace chr
 {
     namespace xf
     {
@@ -34,5 +34,3 @@ namespace chronotext
         };
     }
 }
-
-namespace chr = chronotext;

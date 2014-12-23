@@ -13,7 +13,7 @@
 #include <map>
 #include <memory>
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {
@@ -85,4 +85,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

@@ -11,7 +11,7 @@
 #include "cinder/Path2d.h"
 #include "cinder/Xml.h"
 
-namespace chronotext
+namespace chr
 {
     class FXGDocument
     {
@@ -32,4 +32,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

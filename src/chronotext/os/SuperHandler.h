@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace chronotext
+namespace chr
 {
     class SuperHandler : public Handler
     {
@@ -30,4 +30,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

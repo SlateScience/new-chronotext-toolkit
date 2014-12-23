@@ -11,7 +11,7 @@
 using namespace std;
 using namespace ci;
 
-namespace chronotext
+namespace chr
 {
     Texture::Ref TextureManager::preloadTexture(const TextureRequest &textureRequest)
     {

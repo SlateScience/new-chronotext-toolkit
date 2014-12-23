@@ -17,7 +17,7 @@
 
 #include <vector>
 
-namespace chronotext
+namespace chr
 {
     class ShapeMesh
     {
@@ -37,4 +37,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

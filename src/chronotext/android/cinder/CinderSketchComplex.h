@@ -12,7 +12,7 @@
 
 #include "chronotext/cinder/CinderSketchBase.h"
 
-namespace chronotext
+namespace chr
 {
     class CinderDelegate;
     
@@ -51,5 +51,3 @@ namespace chronotext
         std::shared_ptr<FrameClock> mClock;
     };
 }
-
-namespace chr = chronotext;

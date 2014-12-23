@@ -12,7 +12,7 @@
 #include FT_GLYPH_H
 #include FT_TRUETYPE_TABLES_H
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {
@@ -39,4 +39,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

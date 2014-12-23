@@ -3,7 +3,7 @@
 #include "chronotext/texture/TextureManager.h"
 #include "chronotext/path/StrokeHelper.h"
 
-namespace chronotext
+namespace chr
 {
     class Hairline
     {
@@ -31,4 +31,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

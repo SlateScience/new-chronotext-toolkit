@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-namespace chronotext
+namespace chr
 {
     static uint64_t hash(const void *key, int len, unsigned int seed)
     {
@@ -75,4 +75,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

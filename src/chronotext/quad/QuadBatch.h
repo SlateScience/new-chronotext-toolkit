@@ -12,7 +12,7 @@
 
 #include "cinder/gl/gl.h"
 
-namespace chronotext
+namespace chr
 {
     struct Vertex
     {
@@ -95,4 +95,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

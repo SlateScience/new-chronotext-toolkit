@@ -15,7 +15,7 @@
 
 #include <boost/asio.hpp>
 
-namespace chronotext
+namespace chr
 {
     class CinderSketchBase : public SuperHandler
     {
@@ -93,4 +93,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

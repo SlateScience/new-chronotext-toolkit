@@ -14,7 +14,7 @@
 
 #include "cinder/gl/gl.h"
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {
@@ -45,4 +45,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

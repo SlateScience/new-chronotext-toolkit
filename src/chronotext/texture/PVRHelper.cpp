@@ -18,7 +18,7 @@ using namespace ci;
 
 #define PVR_TEXTURE_FLAG_TYPE_MASK 0xff
 
-namespace chronotext
+namespace chr
 {
     /*
      * PVR VERSION 2

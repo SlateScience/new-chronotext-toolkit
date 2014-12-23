@@ -27,7 +27,7 @@
 #include "cinder/DataSource.h"
 #include "cinder/DataTarget.h"
 
-namespace chronotext
+namespace chr
 {
     class SplinePath
     {
@@ -88,4 +88,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

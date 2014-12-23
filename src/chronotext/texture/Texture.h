@@ -11,7 +11,7 @@
 #include "chronotext/Exception.h"
 #include "chronotext/texture/TextureData.h"
 
-namespace chronotext
+namespace chr
 {
     class Texture
     {
@@ -73,4 +73,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

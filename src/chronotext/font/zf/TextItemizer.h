@@ -39,7 +39,7 @@
 #include "unicode/uscript.h"
 #include "unicode/ubidi.h"
 
-namespace chronotext
+namespace chr
 {
     namespace zf
     {
@@ -64,4 +64,4 @@ namespace chronotext
     }
 }
 
-namespace chr = chronotext;
+

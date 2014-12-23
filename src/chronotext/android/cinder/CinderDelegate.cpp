@@ -19,7 +19,7 @@ using namespace app;
 
 #define GRAVITY_EARTH 9.80665f
 
-namespace chronotext
+namespace chr
 {
     /*
      * CALLED ON THE RENDERER'S THREAD FROM chronotext.android.gl.GLRenderer.onSurfaceCreated()

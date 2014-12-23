@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace chronotext
+namespace chr
 {
     int TaskManager::MAX_CONCURRENT_THREADS = 4; // XXX: RAW MECHANISM, AS FOR NOW
     

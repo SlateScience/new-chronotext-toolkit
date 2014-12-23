@@ -12,7 +12,7 @@
 #include "chronotext/path/TexturedTriangleStrip.h"
 #include "chronotext/utils/Utils.h"
 
-namespace chronotext
+namespace chr
 {
     class StrokeHelper
     {
@@ -259,4 +259,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

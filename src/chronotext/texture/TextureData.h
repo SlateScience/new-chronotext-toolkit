@@ -14,7 +14,7 @@
 #include "cinder/Surface.h"
 #include "cinder/ImageIo.h"
 
-namespace chronotext
+namespace chr
 {
     struct TextureData
     {
@@ -121,4 +121,4 @@ namespace chronotext
     };
 }
 
-namespace chr = chronotext;
+

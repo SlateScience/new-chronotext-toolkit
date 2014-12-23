@@ -21,7 +21,7 @@
 
 #include <map>
 
-namespace chronotext
+namespace chr
 {
     class TextureAtlas
     {
@@ -46,5 +46,3 @@ namespace chronotext
         void init(InputSource::Ref inputSource, bool useMipmap);
     };
 }
-
-namespace chr = chronotext;
