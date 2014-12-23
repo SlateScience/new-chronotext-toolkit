@@ -21,5 +21,3 @@ namespace chr
         std::shared_ptr<TimeBase> ref() { return shared_from_this(); }
     };
 }
-
-
