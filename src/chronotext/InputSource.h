@@ -104,7 +104,7 @@ namespace chr
         std::string getFilePathHint() const;
         void setFilePathHint(const std::string &hint);
 
-        std::string getURI() const;
+        std::string getURI();
 
     protected:
         int type;
@@ -113,7 +113,6 @@ namespace chr
         ci::fs::path filePath;
         ci::fs::path relativePath;
         std::string filePathHint;
+        std::string uri;
     };
 }
-
-

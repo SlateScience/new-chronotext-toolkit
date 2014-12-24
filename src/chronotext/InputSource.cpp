@@ -333,13 +333,13 @@ namespace chr
         filePathHint = hint;
     }
     
-    string InputSource::getURI() const
+    string InputSource::getURI()
     {
         /*
          * COMPUTING THE VALUE ONLY ONCE ALLOWS FOR EFFICIENT USAGE IN std::map KEYS
          */
-        string uri;
         
+        if (uri.empty())
         {
             switch (type)
             {
