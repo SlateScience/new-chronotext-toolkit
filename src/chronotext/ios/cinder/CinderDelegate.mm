@@ -115,19 +115,26 @@ static BOOL isIpadMini()
     int mx;
     int my;
     
-    switch (viewController.interfaceOrientation)
-    {
-        case UIInterfaceOrientationLandscapeLeft:
-        case UIInterfaceOrientationLandscapeRight:
-            mx = 0;
-            my = 1;
-            break;
-            
-        case UIInterfaceOrientationPortrait:
-        case UIInterfaceOrientationPortraitUpsideDown:
-            mx = 1;
-            my = 0;
-            break;
+    if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1) {
+        switch (viewController.interfaceOrientation)
+        {
+            case UIInterfaceOrientationLandscapeLeft:
+            case UIInterfaceOrientationLandscapeRight:
+                mx = 0;
+                my = 1;
+                break;
+                
+            case UIInterfaceOrientationPortrait:
+            case UIInterfaceOrientationPortraitUpsideDown:
+            case UIInterfaceOrientationUnknown:
+                mx = 1;
+                my = 0;
+                break;
+        }
+    }
+    else {
+        mx = 1;
+        my = 0;        
     }
     
     float scale = 1;
@@ -144,7 +151,7 @@ static BOOL isIpadMini()
     windowInfo.size.y = mx * frameHeight + my * frameWidth;
     
     windowInfo.contentScale = view.contentScaleFactor;
-    
+
     // ---
     
     switch (view.drawableMultisample)
