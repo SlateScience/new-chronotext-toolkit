@@ -19,7 +19,6 @@ namespace chronotext
     protected:
         chr::InputSourceRef inputSource;
     public:
-        ResourceItem();
         ResourceItem(InputSourceRef _inputSource);
         ci::fs::path getFilePathHint() const;
         std::string getURI() const;

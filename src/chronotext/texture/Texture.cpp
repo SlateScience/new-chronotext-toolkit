@@ -38,11 +38,6 @@ namespace chronotext
         setTarget(TextureHelper::uploadTextureData(textureData));
     }
     
-    Texture::Texture(GLenum target, GLint id, int width, int height, bool doNotDispose)
-    {
-        setTarget(gl::Texture::create(target, id, width, height, doNotDispose));
-    }
-
     void Texture::discard()
     {
         if (target)

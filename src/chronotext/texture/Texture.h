@@ -37,7 +37,6 @@ namespace chronotext
         Texture(InputSourceRef inputSource, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
         Texture(const TextureRequest &textureRequest);
         Texture(const TextureData &textureData);
-        Texture(GLenum target, GLint id, int width, int height, bool doNotDispose);
         
         void discard();
         void reload();
