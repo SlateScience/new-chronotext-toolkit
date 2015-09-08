@@ -38,6 +38,18 @@ namespace chronotext
         setTarget(TextureHelper::uploadTextureData(textureData));
     }
     
+    Texture::Texture(ci::gl::TextureRef target)
+    {
+        setTarget(target);
+    }
+    
+    Texture::Texture(shared_ptr<gl::Fbo> fbo)
+    {
+        this->fbo = fbo;
+        ci::gl::Texture& glTexture = fbo->getTexture();
+        setTarget(&glTexture); // don't use ref pointer
+    }
+
     void Texture::discard()
     {
         if (target)
@@ -201,7 +213,11 @@ namespace chronotext
     void Texture::setTarget(ci::gl::TextureRef texture)
     {
         target = texture;
-        
+        setTarget(texture.get());
+    }
+    
+    void Texture::setTarget(ci::gl::Texture* texture)
+    {
         id = texture->getId();
         width = texture->getWidth();
         height = texture->getHeight();

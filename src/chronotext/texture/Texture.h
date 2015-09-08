@@ -10,6 +10,7 @@
 
 #include "chronotext/ResourceItem.h"
 #include "chronotext/texture/TextureData.h"
+#include <cinder/gl/Fbo.h>
 
 namespace chronotext
 {
@@ -37,6 +38,8 @@ namespace chronotext
         Texture(InputSourceRef inputSource, bool useMipmap = false, TextureRequest::Flags flags = TextureRequest::FLAGS_NONE);
         Texture(const TextureRequest &textureRequest);
         Texture(const TextureData &textureData);
+        Texture(ci::gl::TextureRef target);
+        Texture(std::shared_ptr<ci::gl::Fbo> fbo);
         
         void discard();
         void reload();
@@ -69,6 +72,7 @@ namespace chronotext
         
     protected:
         ci::gl::TextureRef target;
+        std::shared_ptr<ci::gl::Fbo> fbo;
         
         GLuint id;
         int width;
@@ -77,6 +81,7 @@ namespace chronotext
         float maxV;
         
         void setTarget(ci::gl::TextureRef texture);
+        void setTarget(ci::gl::Texture* texture);
     };
 }
 

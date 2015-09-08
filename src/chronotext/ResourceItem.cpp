@@ -9,6 +9,10 @@
 #include "ResourceItem.h"
 
 namespace chronotext {
+    ResourceItem::ResourceItem()
+    {
+    }
+    
     ResourceItem::ResourceItem(InputSourceRef _inputSource) :
         inputSource(_inputSource)
     {
@@ -16,11 +20,11 @@ namespace chronotext {
     
     ci::fs::path ResourceItem::getFilePathHint() const
     {
-        return inputSource->getFilePathHint();
+        return inputSource ? inputSource->getFilePathHint() : "";
     }
 
     std::string ResourceItem::getURI() const
     {
-        return inputSource->getURI();
+        return inputSource ? inputSource->getURI() : "";
     }
 }
