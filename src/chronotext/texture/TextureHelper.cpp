@@ -55,46 +55,52 @@ namespace chronotext
     
     TextureData TextureHelper::fetchTextureData(const TextureRequest &textureRequest)
     {
-        if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.gz"))
-        {
-            if (textureRequest.inputSource->isFile())
+        if (textureRequest.inputSource) {
+            if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.gz"))
             {
-                return TextureData(textureRequest, PVRHelper::decompressPVRGZ(textureRequest.inputSource->getFilePath()));
+                if (textureRequest.inputSource->isFile())
+                {
+                    return TextureData(textureRequest, PVRHelper::decompressPVRGZ(textureRequest.inputSource->getFilePath()));
+                }
+                else
+                {
+                    throw Texture::Exception("PVR.GZ TEXTURES CAN ONLY BE LOADED FROM FILES");
+                }
+            }
+            else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.ccz"))
+            {
+                return TextureData(textureRequest, PVRHelper::decompressPVRCCZ(textureRequest.inputSource->loadDataSource()));
+            }
+            else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr"))
+            {
+                return TextureData(textureRequest, textureRequest.inputSource->loadDataSource()->getBuffer());
             }
             else
             {
-                throw Texture::Exception("PVR.GZ TEXTURES CAN ONLY BE LOADED FROM FILES");
+                if (textureRequest.flags == TextureRequest::FLAGS_TRANSLUCENT)
+                {
+                    return TextureData(fetchTranslucentTextureData(textureRequest));
+                }
+                else if (textureRequest.flags == TextureRequest::FLAGS_POT_CROP)
+                {
+                    return TextureData(fetchCroppablePowerOfTwoTextureData(textureRequest));
+                }
+                else if (textureRequest.flags & TextureRequest::FLAGS_POT)
+                {
+                    return TextureData(fetchPowerOfTwoTextureData(textureRequest));
+                }
+                else
+                {
+                    return TextureData(textureRequest, loadImage(textureRequest.inputSource->loadDataSource()));
+                }
             }
+            return TextureData();
         }
-        else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr.ccz"))
-        {
-            return TextureData(textureRequest, PVRHelper::decompressPVRCCZ(textureRequest.inputSource->loadDataSource()));
-        }
-        else if (boost::ends_with(textureRequest.inputSource->getFilePathHint(), ".pvr"))
-        {
-            return TextureData(textureRequest, textureRequest.inputSource->loadDataSource()->getBuffer());
-        }
-        else
-        {
-            if (textureRequest.flags == TextureRequest::FLAGS_TRANSLUCENT)
-            {
-                return TextureData(fetchTranslucentTextureData(textureRequest));
-            }
-            else if (textureRequest.flags == TextureRequest::FLAGS_POT_CROP)
-            {
-                return TextureData(fetchCroppablePowerOfTwoTextureData(textureRequest));
-            }
-            else if (textureRequest.flags & TextureRequest::FLAGS_POT)
-            {
-                return TextureData(fetchPowerOfTwoTextureData(textureRequest));
-            }
-            else
-            {
-                return TextureData(textureRequest, loadImage(textureRequest.inputSource->loadDataSource()));
-            }
+        else {
+            //TextureData(const TextureRequest &request, std::shared_ptr<uint8_t> data, GLenum glInternalFormat, GLenum glFormat, int width, int height)
+            return TextureData(textureRequest, NULL, GL_RGBA, GL_RGBA, textureRequest.maxSize.x, textureRequest.maxSize.y);
         }
         
-        return TextureData();
     }
     
     gl::TextureRef TextureHelper::uploadTextureData(const TextureData &textureData)
@@ -142,12 +148,21 @@ namespace chronotext
             {
                 texture->setDeallocator(&TextureHelper::textureDeallocator, texture.get());
                 
-                LOGD <<
-                "TEXTURE UPLOADED: " <<
-                textureData.request.inputSource->getFilePathHint() << " | " <<
-                texture->getId() << " | " <<
-                texture->getWidth() << "x" << texture->getHeight() <<
-                endl;
+                if (textureData.request.inputSource) {
+                    LOGD <<
+                    "TEXTURE UPLOADED: " <<
+                    textureData.request.inputSource->getFilePathHint() << " | " <<
+                    texture->getId() << " | " <<
+                    texture->getWidth() << "x" << texture->getHeight() <<
+                    endl;
+                }
+                else {
+                    LOGD <<
+                    "TEXTURE CREATED: " <<
+                    texture->getId() << " | " <<
+                    texture->getWidth() << "x" << texture->getHeight() <<
+                    endl;
+                }
             }
         }
         
