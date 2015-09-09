@@ -1,3 +1,5 @@
+#pragma once
+
 #include "chronotext/texture/Texture.h"
 #include <cinder/gl/Fbo.h>
 
