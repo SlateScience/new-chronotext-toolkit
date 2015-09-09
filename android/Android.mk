@@ -29,6 +29,7 @@ LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/texture/Sprite.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/texture/Texture.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/texture/TextureHelper.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/texture/TextureManager.cpp
+LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/texture/FboTexture.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/time/Clock.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/time/MasterClock.cpp
 LOCAL_SRC_FILES += $(CHR_SRC)/chronotext/time/TickingClock.cpp
