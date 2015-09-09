@@ -43,13 +43,11 @@ namespace chronotext
         setTarget(target);
     }
     
-    Texture::Texture(shared_ptr<gl::Fbo> fbo)
+    // protected
+    Texture::Texture()
     {
-        this->fbo = fbo;
-        ci::gl::Texture& glTexture = fbo->getTexture();
-        setTarget(&glTexture); // don't use ref pointer
     }
-
+    
     void Texture::discard()
     {
         if (target)
