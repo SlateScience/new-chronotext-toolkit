@@ -84,6 +84,9 @@ using namespace chr;
         sketch->stop(CinderSketch::FLAG_FOCUS_LOST);
         active = NO;
     }
+    else if (reason == REASON_APPLICATION_DID_ENTER_BACKGROUND) {
+        sketch->stop(CinderSketch::FLAG_APP_STOPPED);
+    }
     else
     {
         sketch->stop(CinderSketch::FLAG_APP_PAUSED);
@@ -396,5 +399,14 @@ static BOOL isIpadMini()
         sketch->event(CinderSketch::EVENT_MEMORY_WARNING);
     }
 }
+// This is not an Override - we use the same name because it servers the same purpose
+- (void) applicationDidEnterBackground
+{
+    if (initialized)
+    {   
+        [self stopWithReason:REASON_APPLICATION_DID_ENTER_BACKGROUND];
+    }
+}
+
 
 @end

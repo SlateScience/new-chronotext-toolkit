@@ -25,7 +25,8 @@ enum
     REASON_VIEW_WILL_APPEAR,
     REASON_VIEW_WILL_DISAPPEAR,
     REASON_APPLICATION_DID_BECOME_ACTIVE,
-    REASON_APPLICATION_WILL_RESIGN_ACTIVE
+    REASON_APPLICATION_WILL_RESIGN_ACTIVE,
+    REASON_APPLICATION_DID_ENTER_BACKGROUND
 };
 
 @interface CinderDelegate : NSObject <UIAccelerometerDelegate>
@@ -84,4 +85,5 @@ enum
 - (void) sendMessageToSketch:(int)what body:(NSString*)body;
 - (void) receiveMessageFromSketch:(int)what body:(NSString*)body;
 
+- (void) applicationDidEnterBackground;
 @end
