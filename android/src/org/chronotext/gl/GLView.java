@@ -54,10 +54,8 @@ public class GLView extends GLSurfaceView
   @Override
   protected void onDetachedFromWindow()
   {
-    queueEvent(new Runnable()
-    {
-      public void run()
-      {
+    queueEvent(new Runnable() {
+      public void run() {
         renderer.onDetachedFromWindow();
       }
     });
@@ -70,11 +68,20 @@ public class GLView extends GLSurfaceView
   {
     super.onResume();
 
+    queueEvent(new Runnable() {
+      public void run() {
+        renderer.onResume();
+      }
+    });
+  }
+
+  public void onStop()
+  {
     queueEvent(new Runnable()
     {
       public void run()
       {
-        renderer.onResume();
+        renderer.onStop();
       }
     });
   }
@@ -92,7 +99,6 @@ public class GLView extends GLSurfaceView
       }
     });
   }
-
   @Override
   public void onVisibilityChanged(View changedView, final int visibility)
   {

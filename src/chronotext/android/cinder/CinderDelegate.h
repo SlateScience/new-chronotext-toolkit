@@ -66,7 +66,8 @@ namespace chronotext
             EVENT_SHOWN,
             EVENT_HIDDEN,
             EVENT_BACKGROUND,
-            EVENT_FOREGROUND
+            EVENT_FOREGROUND,
+            EVENT_STOPPED,
         };
         
     public:

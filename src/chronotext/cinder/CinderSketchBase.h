@@ -26,7 +26,8 @@ namespace chronotext
             FLAG_APP_RESUMED,
             FLAG_APP_PAUSED,
             FLAG_SCREEN_ENTERED,
-            FLAG_SCREEN_LEFT
+            FLAG_SCREEN_LEFT,
+            FLAG_APP_STOPPED
         };
         
         enum
