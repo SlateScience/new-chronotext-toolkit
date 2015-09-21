@@ -207,7 +207,12 @@ namespace chronotext
                 mTimer.stop();
                 sketch->stop(CinderSketch::FLAG_APP_PAUSED);
                 break;
+            case EVENT_STOPPED:
+                mTimer.stop();
                 
+                sketch->stop(CinderSketch::FLAG_APP_STOPPED);
+                sketch->event(CinderSketch::EVENT_CONTEXT_LOST); // ASSERTION: THE GL CONTEXT IS ABOUT TO BE LOST
+                break;
             case EVENT_BACKGROUND:
                 sketch->event(CinderSketch::EVENT_BACKGROUND);
                 break;

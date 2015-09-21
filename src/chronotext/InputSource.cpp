@@ -60,7 +60,6 @@ namespace chronotext
 #elif defined(CINDER_COCOA_TOUCH)
         source->filePath = FileSystem::getResourcePath("assets" / relativePath);
 #endif
-        
         return source;
     }
     

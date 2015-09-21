@@ -176,6 +176,27 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
     }
   }
 
+  public void onStop()
+  {
+    if (attached)
+    {
+      if (!hidden)
+      {
+        System.out.printf("AVERAGE FRAME-RATE: %f FRAMES PER SECOND\n", ticks / (elapsed / 1000f));
+
+        /*
+         * AT THIS STAGE, THE SURFACE HAS BEEN ALREADY DESTROYED,
+         * I.E. UNLOADING TEXTURES WILL BE A NO-OP...
+         */
+        stop();
+      }
+      else
+      {
+        background();
+      }
+    }
+  }
+
   /*
    * THIS IS RELATED TO APPLICATION-DESTRUCTION (I.E. NOT SURFACE-DESTRUCTION)
    */
@@ -199,6 +220,8 @@ public abstract class GLRenderer implements GLSurfaceView.Renderer
   public abstract void detached();
 
   public abstract void paused();
+
+  public abstract void stop();
 
   public abstract void resumed();
 

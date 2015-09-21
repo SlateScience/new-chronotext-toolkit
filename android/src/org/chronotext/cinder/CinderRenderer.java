@@ -34,6 +34,7 @@ public class CinderRenderer extends GLRenderer
   public static final int EVENT_HIDDEN = 6;
   public static final int EVENT_BACKGROUND = 7;
   public static final int EVENT_FOREGROUND = 8;
+  public static final int EVENT_STOPPED = 9;
 
   public static final int ACCELEROMETER_ROTATION_DEFAULT = 0;
   public static final int ACCELEROMETER_ROTATION_PORTRAIT = 1;
@@ -110,6 +111,12 @@ public class CinderRenderer extends GLRenderer
   public void paused()
   {
     event(EVENT_PAUSED);
+    resumed = false;
+  }
+
+  public void stop()
+  {
+    event(EVENT_STOPPED);
     resumed = false;
   }
 

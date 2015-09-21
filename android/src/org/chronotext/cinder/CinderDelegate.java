@@ -79,6 +79,11 @@ public class CinderDelegate extends Handler
     mView.onPause();
   }
 
+  public void onStop()
+  {
+    mView.onStop();
+  }
+
   public void onResume()
   {
     mView.onResume();
